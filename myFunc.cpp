@@ -2,14 +2,17 @@
 
 extern unsigned int startSize;
 
-
 HashTable::HashTable() {
 	data.resize(startSize);
 	size = startSize;
 	used = 0;
 }
 
-HashTable::~HashTable () {};
+HashTable::HashTable(unsigned int newsize) {
+	data.resize(newsize);
+	size = newsize;
+	used = 0;
+}
 
 HashTable::HashTable (const HashTable& b) {
 	size = b.size;
@@ -17,6 +20,8 @@ HashTable::HashTable (const HashTable& b) {
 	data.resize(size);
 	data = b.data;
 }
+
+HashTable::~HashTable() {};
 
 unsigned int Hash(Key k, unsigned int size) {
 	unsigned long hash = 33;
@@ -35,7 +40,6 @@ unsigned int HashСollis(Key k, unsigned int size) {
 	return (hash % size);
 }
 
-// Обменивает значения двух хэш-таблиц.
 void HashTable::swap(HashTable& b) {
 	std::vector<Data> tmpD;
 	tmpD.reserve(size);
@@ -58,31 +62,59 @@ void HashTable::swap(HashTable& b) {
 }
 
 void HashTable::resize(unsigned long newsize) {
-
+	HashTable newTable(newsize);
+	unsigned int i = 0;
+	Data tmp;
+	for (; ((i < size)&&(used < newTable.used)); i++) {
+		tmp = data[i];
+		if (tmp.empty == false)
+			newTable.insert(tmp.key, tmp.value);
+	}
+	newTable.size = newsize;
+	size = newsize;
+	data.reserve(newsize);
+	data = newTable.data;
 }
 
 HashTable& HashTable::operator=(const HashTable& b){
 	used = b.used;
 	data.clear();
-	data.reserve();
+	data.reserve(b.size);
 	data = b.data;
 	size = b.size;
 	used = b.used;
-	return this;
+	return b;
 }
 
-// Очищает контейнер. Size = START_SIZE; массив имён -- пустой 
+// Clear container; size = startSize or unchanged; used = 0 
 void HashTable::clear() {
 	used = 0;
 	data.clear();
 	size = startSize;//optional
 	data.resize(size);//also optional
 }
-// Удаляет элемент по заданному ключу.
+
 bool HashTable::erase(const Key& k) {
-	
+	unsigned int keyInt = 0, i = 0;
+	Data tmp;
+	bool flag = true, ret = false;
+	do {
+		keyInt = (Hash(k, size) + i * HashСollis(k, size)) % size;
+		tmp = data[keyInt];
+		if ((tmp.empty == false)&&(tmp.key == k)) {
+			used--;
+			tmp.empty = true;
+			tmp.value = { 0,0 };
+			tmp.key.clear();
+			flag = false;
+			ret = true;
+		}
+		else
+			i++;
+	} while ((flag)&&(i < size));
+	return ret;
 }
-// Вставка в контейнер. Возвращаемое значение - успешность вставки.
+
 bool HashTable::insert(const Key& k, const Value& v) {
 	unsigned int keyInt = 0, i = 0;
 	Data tmp;
@@ -103,11 +135,10 @@ bool HashTable::insert(const Key& k, const Value& v) {
 		else
 			i++;
 		
-	} while ((flag)&(i < size/2));
+	} while ((flag)&&(i < size/2));
 	return flag;
 }
 
-// Проверка наличия значения по заданному ключу.
 bool HashTable::contains(const Key& k) const {
 	unsigned int keyInt = 0, i = 0;
 	Data tmp;
@@ -122,16 +153,12 @@ bool HashTable::contains(const Key& k) const {
 		else
 			i++;
 
-	} while ((flag) & (i < size));
+	} while ((flag) && (i < size));
 	return ret;
 }
 
-// Возвращает значение по ключу. Небезопасный метод.
-// В случае отсутствия ключа в контейнере, следует вставить в контейнер
-// значение, созданное конструктором по умолчанию и вернуть ссылку на него. 
 Value& HashTable::operator[](const Key& k) {};
 
-// Возвращает значение по ключу. Бросает исключение при неудаче.
 Value& HashTable::at(const Key& k) {}
 const Value& HashTable::at(const Key& k) const {}
 

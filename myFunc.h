@@ -17,7 +17,7 @@ struct Value {
 
 struct Data {
 	Value value;
-	bool empty;
+	bool empty;// true -- slot is empty, false -- slot isn't empty
 	Key key;
 };
 
@@ -29,6 +29,7 @@ private:
 public:
 	HashTable();
 	~HashTable();
+	HashTable(unsigned int newsize);
 
 	HashTable(const HashTable& b);
 

@@ -65,9 +65,9 @@ public:
 	std::size_t Size() const;
 	bool empty() const;
 
-	friend bool operator==(const HashTable & a, const HashTable & b);
+	friend bool operator==(const HashTable & a, const HashTable & b);// a == b if a.used == b.used, and a.data == b.data; BUT a.size may be != b.size
 	friend bool operator!=(const HashTable & a, const HashTable & b);
 };
 
 unsigned int Hash(Key k, unsigned int size);
-unsigned int Hash—ollis(Key k, unsigned int size);
+unsigned int HashCollis(Key k, unsigned int size);

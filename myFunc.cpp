@@ -21,7 +21,10 @@ HashTable::HashTable (const HashTable& b) {
 	data = b.data;
 }
 
-HashTable::~HashTable() {};
+HashTable::~HashTable() {
+	//data.clear();
+	data.~vector();
+};
 
 unsigned int Hash(Key k, unsigned int size) {
 	unsigned long hash = 33;
@@ -31,7 +34,7 @@ unsigned int Hash(Key k, unsigned int size) {
 	return (hash % size);
 }
 
-unsigned int Hash—ollis(Key k, unsigned int size) {
+unsigned int HashCollis(Key k, unsigned int size) {
 	//stackoverflow.com/questions/7666509/hash-function-for-string
 	unsigned long hash = 5381;
 	for (unsigned int i = 0; i < k.length(); i++)
@@ -83,7 +86,7 @@ HashTable& HashTable::operator=(const HashTable& b){
 	data = b.data;
 	size = b.size;
 	used = b.used;
-	return b;
+	return this;
 }
 
 // Clear container; size = startSize or unchanged; used = 0 
@@ -99,7 +102,7 @@ bool HashTable::erase(const Key& k) {
 	Data tmp;
 	bool flag = true, ret = false;
 	do {
-		keyInt = (Hash(k, size) + i * Hash—ollis(k, size)) % size;
+		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
 		tmp = data[keyInt];
 		if ((tmp.empty == false)&&(tmp.key == k)) {
 			used--;
@@ -144,7 +147,7 @@ bool HashTable::contains(const Key& k) const {
 	Data tmp;
 	bool flag = true, ret = false;
 	do {
-		keyInt = (Hash(k, size) + i * Hash—ollis(k, size)) % size;
+		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
 		tmp = data[keyInt];
 		if (tmp.key == k) {
 			flag = false;
@@ -156,23 +159,57 @@ bool HashTable::contains(const Key& k) const {
 	} while ((flag) && (i < size));
 	return ret;
 }
-
-Value& HashTable::operator[](const Key& k) {};
-
-Value& HashTable::at(const Key& k) {}
-const Value& HashTable::at(const Key& k) const {}
-
-std::size_t HashTable::Size() const {
-	return std::size_t(size);
+// fix it!!!!!!!!!!!
+Value& HashTable::operator[](const Key& k) {//fixme
+	unsigned int keyInt = 0, i = 0;
+	Data tmp;
+	do {
+		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
+		tmp = data[keyInt];
+		if (tmp.key == k)
+			break;
+		else
+			i++;
+	} while (i < size);
+	Data& tmp_L = data[keyInt];
+	Value& ret = tmp_L.value;
+	return ret;
+}
+Value& HashTable::at(const Key& k) {//fixme
+	unsigned int keyInt = 0, i = 0;
+	Data tmp;
+	do {
+		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
+		tmp = data[keyInt];
+		if (tmp.key == k)
+			break;
+		else
+			i++;
+	} while (i < size);
+	Data& tmp_L = data[keyInt];
+	Value& ret = tmp_L.value;
+	return ret;
+}
+const Value& HashTable::at(const Key& k) const {}//fixme
+//fix it ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^ ^  ^ ^
+unsigned int HashTable::Size() const {
+	return size;
 }
 bool HashTable::empty() const {
 	return (used == 0) ? true : false;
+} //
+
+bool operator==(const HashTable& a, const HashTable& b) {
+	bool ret = false;
+	if (a.used == b.used)
+		if (a.data == b.data)
+			ret = true;
+	return ret;
 }
-
-bool HashTable::operator==(const HashTable& a, const HashTable& b);
-bool HashTable::operator!=(const HashTable& a, const HashTable& b);
-};
-
-int main(int argc, char ** argv) {
-	
+bool operator!=(const HashTable& a, const HashTable& b) {
+	bool ret = true;
+	if (a.used == b.used)
+		if (a.data == b.data)
+			ret = false;
+	return ret;
 }

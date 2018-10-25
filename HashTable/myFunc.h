@@ -38,7 +38,7 @@ class HashTable {
 private:
 	std::vector<Data> data;
 	unsigned int size;
-	unsigned int used;
+	unsigned int used;//size_t
 	const static unsigned int startSize = 100;
 public:
 	HashTable();
@@ -51,8 +51,6 @@ public:
 	void resize(unsigned long newsize);
 
 	// Обменивает значения двух хэш-таблиц.
-	// Подумайте, зачем нужен этот метод, при наличии стандартной функции
-	// std::swap.
 	void swap(HashTable& b);
 
 	HashTable& operator=(const HashTable& b);

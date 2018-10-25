@@ -1,10 +1,6 @@
 #include "myFunc.h"
 
-HashTable::HashTable() {
-	data.resize(startSize);
-	size = startSize;
-	used = 0;
-}
+HashTable::HashTable() : HashTable(startSize) {}
 
 HashTable::HashTable(unsigned int newsize) {
 	data.resize(newsize);
@@ -12,17 +8,14 @@ HashTable::HashTable(unsigned int newsize) {
 	used = 0;
 }
 
-HashTable::HashTable (const HashTable& b) {
+HashTable::HashTable (const HashTable& b) {//initializer list
 	size = b.size;
 	used = b.used;
 	data.resize(size);
 	data = b.data;
 }
 
-HashTable::~HashTable() {
-	//data.clear();
-	data.~vector();
-};
+HashTable::~HashTable() {};
 
 unsigned int Hash(Key k, unsigned int size) {
 	unsigned long hash = 33;
@@ -49,6 +42,7 @@ void HashTable::swap(HashTable& b) {
 	data = b.data;
 	b.data.reserve(size);
 	b.data = tmpD;
+	//std swap
 	if (b.used != used) {
 		unsigned int tmpU = used;
 		used = b.used;
@@ -71,15 +65,15 @@ void HashTable::resize(unsigned long newsize) {
 		if (tmp.empty == false)
 			newTable.insert(tmp.key, tmp.value);
 	}
-	newTable.size = newsize;
+	//swap????????????????????????
 	size = newsize;
-	data.reserve(newsize);
 	data = newTable.data;
 }
 
 HashTable& HashTable::operator=(const HashTable& b){
+	//?????????????????????????????????????
 	used = b.used;
-	data.clear();
+	data.clear();//?????????
 	data.reserve(b.size);
 	data = b.data;
 	size = b.size;
@@ -103,17 +97,18 @@ bool HashTable::erase(const Key& k) {
 	do {
 		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
 		tmp = data[keyInt];
-		if ((tmp.empty == false)&&(tmp.key == k)) {
+		if ((tmp.empty == false) && (tmp.key == k)) {
 			used--;
 			tmp.empty = true;
-			tmp.value = { 0,0 };
+			tmp.value = {0, 0};
 			tmp.key.clear();
 			flag = false;
 			ret = true;
 		}
-		else
+		else {
 			i++;
-	} while ((flag)&&(i < size));
+		}
+	} while ((flag)&&(i < size));///?????????????????????????????????????
 	return ret;
 }
 
@@ -244,6 +239,7 @@ bool HashTable::empty() const {
 	return (used == 0);
 }
 
+//????????????????????????????????????
 bool operator==(const HashTable& a, const HashTable& b) {
 	bool ret = false;
 	unsigned int maxIndex = 0, i = 0;
@@ -271,9 +267,10 @@ bool operator!=(const HashTable& a, const HashTable& b) {
 		maxIndex = a.size;
 	if (a.used != b.used) {
 		ret = true;
-	for (; i < maxIndex; i++)
+	}
+	for (; i < maxIndex; i++) {
 		if (a.data[i] == b.data[i]) {
-			ret = false;
+			ret = false;//??????????????????????????/
 			break;
 		}
 	}	

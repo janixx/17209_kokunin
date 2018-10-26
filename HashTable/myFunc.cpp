@@ -1,84 +1,85 @@
 #include "myFunc.h"
 
+Value::Value(unsigned	char a, unsigned char w) : age(a), weight(w) {}
+Value::Value() : Value(0, 0) {}
+Value& Value::operator=(const Value & v) {
+	age = v.age;
+	weight = v.weight;
+	return *this;
+}
+bool operator==(const Value& a, const Value& b) {
+	if ((a.age == b.age) && (a.weight == b.weight))
+		return true;
+	return false;
+}
+
+
 HashTable::HashTable() : HashTable(startSize) {}
 
-HashTable::HashTable(unsigned int newsize) {
+HashTable::HashTable(size_t newsize) {
 	data.resize(newsize);
-	size = newsize;
+	sz = newsize;
 	used = 0;
 }
 
-HashTable::HashTable (const HashTable& b) {//initializer list
-	size = b.size;
-	used = b.used;
-	data.resize(size);
-	data = b.data;
-}
+HashTable::HashTable(const HashTable& b) : sz(b.sz), used(b.used), data(b.data) {}//initializer list
 
 HashTable::~HashTable() {};
 
-unsigned int Hash(Key k, unsigned int size) {
-	unsigned long hash = 33;
-	for (unsigned int i = 0; i < k.length(); i++) {
+size_t HashTable::hash(const Key & k) const {
+	unsigned long long hash = 33;
+	for (size_t i = 0; i < k.length(); i++) {
 		hash = k[i] + (hash << 5) + (hash << 16) - hash;
 	}
-	return (hash % size);
+	return (hash % sz);
 }
 
-unsigned int HashCollis(Key k, unsigned int size) {
+size_t HashTable::hashCollis(const Key & k) const {
 	//stackoverflow.com/questions/7666509/hash-function-for-string
-	unsigned long hash = 5381;
-	for (unsigned int i = 0; i < k.length(); i++)
-		hash = ((hash << 5) + hash) + k[i]; /* hash * 33 + c */
-
-	return (hash % size);
+	unsigned long long hash = 5381;
+	for (unsigned int i = 0; i < k.length(); i++){
+		hash = (((hash << 5) + hash) + k[i]);/* % size; hash * 33 + c */
+	}
+	return (hash % sz);
 }
 
 void HashTable::swap(HashTable& b) {
-	std::vector<Data> tmpD;
-	tmpD.reserve(size);
-	tmpD = data;
-	data.reserve(b.size);
-	data = b.data;
-	b.data.reserve(size);
-	b.data = tmpD;
-	//std swap
-	if (b.used != used) {
-		unsigned int tmpU = used;
-		used = b.used;
-		b.used = tmpU;
-	}
-
-	if (b.size != size) {
-		unsigned int tmpS = size;
-		size = b.size;
-		b.size = tmpS;
-	}
+	std::swap(data, b.data);
+	std::swap(used, b.used);
+	std::swap(sz, b.sz);
 }
 
-void HashTable::resize(unsigned long newsize) {
+//передаЄт номер €чейки по ключу. ≈сли €чейка свободна возвращает еЄ индекс, если находит 
+//в некоторой €чейке соответствующей данной ключ - возвращает 
+size_t HashTable::indexSearch(const Key& k) const {
+	size_t keyInt = 0, i = 0;
+	do {
+		keyInt = (hash(k) + i * hashCollis(k)) % sz;
+		if ((data[keyInt].empty == true) || (data[keyInt].key == k))
+			break;
+		else
+			i++;
+	} while (i < sz);
+	return keyInt;
+}
+
+void HashTable::resize(size_t newsize) {
 	HashTable newTable(newsize);
-	unsigned int i = 0;
-	Data tmp;
-	for (; ((i < size)&&(used < newTable.used)); i++) {
-		tmp = data[i];
-		if (tmp.empty == false)
-			newTable.insert(tmp.key, tmp.value);
+	size_t i = 0;
+	for (; ((i < sz)&&(newTable.used < used)); i++) {
+		if (data[i].empty == false)
+			newTable.insert(data[i].key, data[i].value);
 	}
-	//swap????????????????????????
-	size = newsize;
-	data = newTable.data;
+	sz = newsize;
+	std::swap(data, newTable.data);
 }
 
 HashTable& HashTable::operator=(const HashTable& b){
-	//?????????????????????????????????????
-	used = b.used;
-	data.clear();//?????????
-	data.reserve(b.size);
-	data = b.data;
-	size = b.size;
-	used = b.used;
-
+	if (this != &b) {
+		used = b.used;
+		data = b.data;
+		sz = b.sz;
+	}
 	return *this;
 }
 
@@ -86,152 +87,75 @@ HashTable& HashTable::operator=(const HashTable& b){
 void HashTable::clear() {
 	used = 0;
 	data.clear();
-	size = startSize;//optional
-	data.resize(size);//also optional
+	sz = startSize;//optional
+	data.resize(sz);//also optional
 }
 
 bool HashTable::erase(const Key& k) {
-	unsigned int keyInt = 0, i = 0;
-	Data tmp;
-	bool flag = true, ret = false;
-	do {
-		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
-		tmp = data[keyInt];
-		if ((tmp.empty == false) && (tmp.key == k)) {
-			used--;
-			tmp.empty = true;
-			tmp.value = {0, 0};
-			tmp.key.clear();
-			flag = false;
-			ret = true;
-		}
-		else {
-			i++;
-		}
-	} while ((flag)&&(i < size));///?????????????????????????????????????
-	return ret;
+	size_t keyInt = indexSearch(k);
+	if ((data[keyInt].empty == false) && (data[keyInt].key == k)) {
+		data[keyInt].key.clear();
+		data[keyInt].empty = true;
+		data[keyInt].value = { 0,0 };
+		used--;
+		return true;
+	}
+	else
+		return false;
 }
 
 bool HashTable::insert(const Key& k, const Value& v) {
-	unsigned int keyInt = 0, i = 0;
-	Data tmp;
-	bool flag = true;
-	if (used + 1 >= size)
-		resize(2 * size);
-	do {
-		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
-		tmp = data[keyInt];
-		if (tmp.empty == true) {
-			tmp.key = k;
-			tmp.empty = false;
-			tmp.value = v;
-			data[keyInt] = tmp;
-			used++;
-			flag = false;
-		}
-		else
-			i++;
-		
-	} while ((flag)&&(i < size/2));
-	return flag;
+	if ((used + 1 >= sz) && (sz <= SIZE_MAX / 2))
+		resize(2 * sz);
+
+	size_t keyInt = indexSearch(k);
+	if (data[keyInt].empty == true) {
+		data[keyInt].empty = false;
+		data[keyInt].value = v;
+		data[keyInt].key = k;
+		used++;
+		return true;
+	}
+	else
+		return false;
 }
 
 bool HashTable::contains(const Key& k) const {
-	unsigned int keyInt = 0, i = 0;
-	Data tmp;
-	bool flag = true, ret = false;
-	do {
-		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
-		tmp = data[keyInt];
-		if (tmp.empty == false) {
-			if (tmp.key == k) {
-				flag = false;
-				ret = true;
-			}
-			else ret = false;
-		}
-		i++;
-	} while ((flag) && (i < size));
-	return ret;
+	size_t keyInt = indexSearch(k);
+	
+	if ((data[keyInt].empty == false) && (data[keyInt].key == k))
+		return true;
+	else
+		return false;
 }
 
 Value& HashTable::operator[](const Key& k) {
-	unsigned int keyInt = 0, i = 0;
-	bool flag = false;
-	Data tmp;
-	do {
-		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
-		tmp = data[keyInt];
-		if (tmp.empty == true) {
-			if (tmp.key == k)
-				flag = true;
-			break;
-		}
-		/*else if (tmp.empty == true) {
-			tmp.key = k;
-			tmp.empty = false;
-			tmp.value = 
-		}*/
-		else
-			i++;
-	} while (i < size);
-	Data& tmp_L = data[keyInt];
-	if (flag == false) {
-		tmp_L.value.age = 0;
-		tmp_L.value.weight = 0;
-		tmp_L.key = k;
-		tmp_L.empty = false;
+	size_t keyInt = indexSearch(k);
+	if ((data[keyInt].empty == false) && (data[keyInt].key == k))
+		return data[keyInt].value;
+	else {
+		Value v;
+		return v;
 	}
-	Value& ret = tmp_L.value;
-	return ret;
 }
+
 Value& HashTable::at(const Key& k) {
-	unsigned int keyInt = 0, i = 0;
-	bool flag = false;
-	Data tmp;
-	do {
-		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
-		tmp = data[keyInt];
-		if (tmp.empty == false)
-			if (tmp.key == k) {
-				flag = true;
-				break;
-			}
-		else
-			i++;
-	} while (i < size);
-	if (flag == true) {
-		Data& tmp_L = data[keyInt];
-		Value& ret = tmp_L.value;
-		return ret;
-	}
-	throw false;
+	size_t keyInt = indexSearch(k);
+	if ((data[keyInt].empty == false) && (data[keyInt].key == k))
+		return data[keyInt].value;
+	else
+		throw std::out_of_range("No this key in table, try again.");
 }
 
 const Value& HashTable::at(const Key& k) const {
-	unsigned int keyInt = 0, i = 0;
-	bool flag = false;
-	Data tmp;
-	do {
-		keyInt = (Hash(k, size) + i * HashCollis(k, size)) % size;
-		tmp = data[keyInt];
-		if (tmp.empty == false)
-			if (tmp.key == k) {
-				flag = true;
-				break;
-			}
-			else
-				i++;
-	} while (i < size);
-	if (flag == true) {
-		const Data& tmp_L = data[keyInt];
-		const Value& ret = tmp_L.value;
-		return ret;
-	}
-	throw false;
+	size_t keyInt = indexSearch(k);
+	if ((data[keyInt].empty == false) && (data[keyInt].key == k))
+		return data[keyInt].value;
+	else
+		throw std::out_of_range("No this key in table, try again.");
 }
 
-unsigned int HashTable::Size() const {
+size_t HashTable::size() const {
 	return used;
 }
 
@@ -239,45 +163,32 @@ bool HashTable::empty() const {
 	return (used == 0);
 }
 
-//????????????????????????????????????
 bool operator==(const HashTable& a, const HashTable& b) {
-	bool ret = false;
-	unsigned int maxIndex = 0, i = 0;
-	if (a.size >= b.size)
-		maxIndex = b.size;
-	else
-		maxIndex = a.size;
 	if (a.used == b.used) {
-		ret = true;
-		for (; i < maxIndex; i++)
-			if (a.data[i] != b.data[i]) {
-				ret = false;
-				break;
-			}
+		for (size_t i = 0; i < a.sz; i++)
+			if ((!a.data[i].empty) && (!b.contains(a.data[i].key)))
+				return false;
+		
+		return true;
 	}
-	return ret;
+	else
+		return false;
 }
 
 bool operator!=(const HashTable& a, const HashTable& b) {
-	bool ret = false;
-	unsigned int maxIndex = 0, i = 0;
-	if (a.size >= b.size)
-		maxIndex = b.size;
-	else
-		maxIndex = a.size;
-	if (a.used != b.used) {
-		ret = true;
-	}
-	for (; i < maxIndex; i++) {
-		if (a.data[i] == b.data[i]) {
-			ret = false;//??????????????????????????/
-			break;
-		}
-	}	
-	return ret;
+	return (!(a == b));
 }
 
-bool operator==(const Data & a, const Data & b) {
+
+HashTable::Data::Data() : value(), empty(true), key("\0") {}
+HashTable::Data::Data(unsigned char a, unsigned char w, Key k) : value(a, w), empty(false), key(k) {}
+HashTable::Data& HashTable::Data::operator=(const Data & a) {
+	key = a.key;
+	value = a.value;
+	empty = a.empty;
+	return *this;
+}
+bool operator==(const HashTable::Data & a, const HashTable::Data & b) {
 	if (a.empty == b.empty)
 		if (a.value.age == b.value.age)
 			if (a.value.weight == b.value.weight)
@@ -285,8 +196,7 @@ bool operator==(const Data & a, const Data & b) {
 					return true;
 	return false;
 }
-
-bool operator!=(const Data & a, const Data & b) {
+bool operator!=(const HashTable::Data & a, const HashTable::Data & b) {
 	if (a.empty == b.empty)
 		if (a.value.age == b.value.age)
 			if (a.value.weight == b.value.weight)

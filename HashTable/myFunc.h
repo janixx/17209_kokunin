@@ -11,45 +11,42 @@ typedef std::string Key;
 struct Value {
 	unsigned char age;
 	unsigned char weight;
-	Value (unsigned	char a, unsigned char w) {
-		age = a;
-		weight = w;
-	}
-	Value() {//а это надо?
-		age = 0;
-		weight = 0;
-	}
+
+	Value(unsigned	char a, unsigned char w);
+	Value();
+	Value& operator=(const Value & v);
 };
 
-struct Data {
-	Value value;
-	bool empty;// true -- slot is empty, false -- slot isn't empty
-	Key key;
-	friend bool operator==(const Data & a, const Data & b);
-	friend bool operator!=(const Data & a, const Data & b);
-	/*Data() {
-		value = {0, 0};
-		key = nullptr;
-		empty = true;
-	}*/
-};
+bool operator==(const Value& a, const Value& b);
+
 
 class HashTable {
 private:
+	struct Data {
+		Value value;
+		bool empty;// true -- slot is empty, false -- slot isn't empty
+		Key key;
+
+		Data();
+		Data(unsigned char a, unsigned char w, Key k);
+		Data& operator=(const Data & a);
+		friend bool operator==(const Data & a, const Data & b);
+		friend bool operator!=(const Data & a, const Data & b);
+	};
 	std::vector<Data> data;
-	unsigned int size;
-	unsigned int used;//size_t
-	const static unsigned int startSize = 100;
+	size_t sz;
+	size_t used;
+	const static size_t startSize = 100;
+	// Мои, самостройные функции.
+	size_t hash(const Key & k) const;
+	size_t hashCollis(const Key & k) const;
+	size_t indexSearch(const Key& k) const;
+	void resize(size_t newsize);
 public:
 	HashTable();
 	~HashTable();
-	HashTable(unsigned int newsize);
-
+	HashTable(size_t newsize);
 	HashTable(const HashTable& b);
-
-	// Мои функции, самостройные функции.
-	void resize(unsigned long newsize);
-
 	// Обменивает значения двух хэш-таблиц.
 	void swap(HashTable& b);
 
@@ -74,12 +71,14 @@ public:
 	Value& at(const Key& k);
 	const Value& at(const Key& k) const;
 	// Возвращает количество вставленных элементов
-	unsigned int Size() const;
+	size_t size() const;
 	bool empty() const;
 
 	friend bool operator==(const HashTable & a, const HashTable & b);// a == b if a.used == b.used, and a.data == b.data; BUT a.size may be != b.size
 	friend bool operator!=(const HashTable & a, const HashTable & b);
+	friend bool operator==(const Data & a, const Data & b);
+	friend bool operator!=(const Data & a, const Data & b);
 };
 
-unsigned int Hash(Key k, unsigned int size);
-unsigned int HashCollis(Key k, unsigned int size);
+//unsigned int Hash(Key k, unsigned int size);
+//unsigned int HashCollis(Key k, unsigned int size);

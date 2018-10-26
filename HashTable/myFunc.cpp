@@ -65,8 +65,7 @@ size_t HashTable::indexSearch(const Key& k) const {
 
 void HashTable::resize(size_t newsize) {
 	HashTable newTable(newsize);
-	size_t i = 0;
-	for (; ((i < sz)&&(newTable.used < used)); i++) {
+	for (size_t i = 0; ((i < sz)&&(newTable.used < used)); i++) {
 		if (data[i].empty == false)
 			newTable.insert(data[i].key, data[i].value);
 	}

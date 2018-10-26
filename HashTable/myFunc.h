@@ -19,25 +19,14 @@ struct Value {
 
 bool operator==(const Value& a, const Value& b);
 
-
 class HashTable {
 private:
-	struct Data {
-		Value value;
-		bool empty;// true -- slot is empty, false -- slot isn't empty
-		Key key;
-
-		Data();
-		Data(unsigned char a, unsigned char w, Key k);
-		Data& operator=(const Data & a);
-		friend bool operator==(const Data & a, const Data & b);
-		friend bool operator!=(const Data & a, const Data & b);
-	};
+	struct Data;
 	std::vector<Data> data;
 	size_t sz;
 	size_t used;
 	const static size_t startSize = 100;
-	// Мои, самостройные функции.
+	// Cамостройные функции.
 	size_t hash(const Key & k) const;
 	size_t hashCollis(const Key & k) const;
 	size_t indexSearch(const Key& k) const;
@@ -80,5 +69,16 @@ public:
 	friend bool operator!=(const Data & a, const Data & b);
 };
 
+struct HashTable::Data {
+	Value value;
+	bool empty;// true -- slot is empty, false -- slot isn't empty
+	Key key;
+
+	Data();
+	Data(unsigned char a, unsigned char w, Key k);
+	Data& operator=(const Data & a);
+	friend bool operator==(const Data & a, const Data & b);
+	friend bool operator!=(const Data & a, const Data & b);
+};
 //unsigned int Hash(Key k, unsigned int size);
 //unsigned int HashCollis(Key k, unsigned int size);

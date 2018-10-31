@@ -24,17 +24,17 @@ private:
 	struct Data;
 	std::vector<Data> data;
 	size_t sz;
-	size_t used;
-	const static size_t startSize = 100;
-	// Cамостройные функции.
+	size_t used = 0;
+	const static size_t startSize = 61;
+private: //my functions
 	size_t hash(const Key & k) const;
-	size_t hashCollis(const Key & k) const;
-	size_t indexSearch(const Key& k) const;
+	size_t hash_collis(const Key & k) const;
+	size_t indexSearch(const Key& k, bool flag) const;//flag == true ключа нет в таблице, flag == false ключ есть в таблице
 	void resize(size_t newsize);
+	HashTable(size_t newsize);
 public:
 	HashTable();
 	~HashTable();
-	HashTable(size_t newsize);
 	HashTable(const HashTable& b);
 	// Обменивает значения двух хэш-таблиц.
 	void swap(HashTable& b);
@@ -46,6 +46,7 @@ public:
 	// Удаляет элемент по заданному ключу.
 	bool erase(const Key& k);
 	// Вставка в контейнер. Возвращаемое значение - успешность вставки.
+	// Если ключ k имелся в контейнере до вставки, возвращается false
 	bool insert(const Key& k, const Value& v);
 
 	// Проверка наличия значения по заданному ключу.
@@ -65,10 +66,12 @@ public:
 
 	friend bool operator==(const HashTable & a, const HashTable & b);// a == b if a.used == b.used, and a.data == b.data; BUT a.size may be != b.size
 	friend bool operator!=(const HashTable & a, const HashTable & b);
+	// Для сравнения Data
 	friend bool operator==(const Data & a, const Data & b);
 	friend bool operator!=(const Data & a, const Data & b);
 };
 
+//Вспомогательная структура
 struct HashTable::Data {
 	Value value;
 	bool empty;// true -- slot is empty, false -- slot isn't empty

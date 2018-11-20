@@ -110,7 +110,6 @@ bool HashTable::insert(const Key& k, const Value& v) {
 		return false;
 }
 
-//test
 bool HashTable::contains(const Key& k) const {
 	size_t keyInt = indexSearch(k, false);
 	
@@ -119,12 +118,18 @@ bool HashTable::contains(const Key& k) const {
 
 Value& HashTable::operator[](const Key& k) {
 	size_t keyInt = indexSearch(k, false);
-	if ((data[keyInt].empty == false) && (data[keyInt].key == k)) {
+	if (data[keyInt].key == k) {
 		return data[keyInt].value;
 	}
-
-	Value * v = new Value();
-	return *v;
+	if ((used > sz / 2) && (sz <= SIZE_MAX / 2)) {
+		resize(3 * sz);
+	}
+	keyInt = indexSearch(k, true);
+	data[keyInt].key = k;
+	data[keyInt].empty = false;
+	used++;
+	data[keyInt].value = Value();
+	return (data[keyInt].value);
 }
 
 //test

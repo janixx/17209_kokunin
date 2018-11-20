@@ -13,13 +13,7 @@ public:
 	~SmartPointer() {
 		if (!spdata)
 			return;
-		if (1 == spdata->counter) {
-			delete spdata->ptr;
-			delete spdata;
-			return;
-		}
-		--spdata->counter;
-		spdata = nullptr;
+		reset(nullptr);
 	}
 	SmartPointer(T * a = nullptr) {
 		spdata = new SmartPtrData;
@@ -35,22 +29,30 @@ public:
 		++spdata->counter;
 	}	//к-р копирования
 	SmartPointer& operator=(const SmartPointer& other) {
-		if (*this!=other) {
-			this->~SmartPointer();
+		if (this != &other) {
+			reset(nullptr);
 			spdata = other.spdata;
 			++spdata->counter;
 		}
 		return *this;
 	}	// по желанию - поддержать семантику перемещения
 	T * get() {
-		return spdata->ptr;//???????????????
-							//What is doing this method?
+		return spdata->ptr;
 	}// получить указатель
 	void reset(T * other) {
-		this->~SmartPointer();
-		spdata = new SmartPtrData;
-		spdata->ptr = other;
-		spdata->counter = 1u;
+		if (1 == spdata->counter) {
+			delete spdata->ptr;
+			delete spdata;
+		}
+		else
+			--spdata->counter;
+		if (!other) {
+			spdata = new SmartPtrData;
+			spdata->ptr = other;
+			spdata->counter = 1u;
+		}
+		else
+			spdata = nullptr;
 	}// освободить старый ресурс, занять новый
 	//operator* , operator->
 	T& operator*() {

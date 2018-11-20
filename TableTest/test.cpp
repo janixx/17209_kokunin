@@ -46,10 +46,8 @@ void RandomString(std::vector<Data> & example, size_t size) {
 }
 void ReadString(std::vector<Data> & example, size_t size) {
 	std::ifstream in("names.txt");
-	std::ofstream out("test.txt");
 	for (size_t i = 0; i < size; i++) {
 		std::getline(in, example[i].key);
-		out << example[i].key << std::endl;
 	}
 //	std::cout << "Array with names succesfully read to vector." << std::endl;
 }

@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "gtest/gtest.h"
 #include "../HashTable/myFunc.h"
 #include <string>
 #include <vector>
@@ -20,10 +20,8 @@ struct Data {
 void TestContain(const HashTable & table, const std::vector<Data> & data, size_t size) {
 	size_t i = 0;
 	for (; i < size; i++) {
-		//if (table.contains(data[i].key)) {
 		EXPECT_NO_THROW(table.at(data[i].key));
 		EXPECT_EQ(table.at(data[i].key), data[i].value);
-		//}
 	}
 	EXPECT_EQ(table.size(), i);
 }
@@ -39,9 +37,8 @@ void RandomString(std::vector<Data> & example, size_t size) {
 		for (unsigned int j = 1; j < lenght; j++) {
 			example[i].key.push_back(unsigned char(97 + (rand() % 26)));
 		}
-		out << example[i].key/* << "\t\t Name number: "<< i */ << std::endl;
+		out << example[i].key << std::endl;
 	}
-	//out << size << " names saved in file." << std::endl;
 	std::cout << "Array with names succesfully generated." << std::endl;
 }
 void ReadString(std::vector<Data> & example, size_t size) {
@@ -49,7 +46,6 @@ void ReadString(std::vector<Data> & example, size_t size) {
 	for (size_t i = 0; i < size; i++) {
 		std::getline(in, example[i].key);
 	}
-	//	std::cout << "Array with names succesfully read to vector." << std::endl;
 }
 
 void TestInsert(HashTable & table, std::vector<Data> & data, size_t size) {
@@ -61,7 +57,6 @@ void TestInsert(HashTable & table, std::vector<Data> & data, size_t size) {
 		EXPECT_NO_THROW(table.at(data[i].key));
 	}
 	EXPECT_FALSE(table.empty());
-	//std::cout << "Я дошёл до метки 4" << std::endl;
 }
 
 void FillExampleArray(std::vector<Data> & examp, size_t size, bool flag) {
@@ -90,7 +85,7 @@ protected:
 		delete tableExample;
 	}
 	HashTable * tableExample;
-	size_t size;// > 75 для корректной работы всех тестов при текущих параметрах таблицы
+	size_t size;// > 75 for correct test's work (with this parametrs hashtable)
 	std::vector<Data> example;
 	bool flag;
 };
@@ -114,16 +109,11 @@ TEST(ConstructorsTesting, ConstructorDefaultCopyTests) {
 	EXPECT_TRUE(b.erase("Vasiliy"));
 	EXPECT_FALSE(b.erase("Vasiliy"));
 	EXPECT_EQ(b.size(), 0);
-	//std::cout << "Я дошёл до метки 0" << std::endl;
 }
 
 //operations
 
 TEST_F(TableTesting, OperationsTesting) {
-	//size_t size = 150;
-	//std::vector<Data> example(size);
-	//FillExampleArray(example, size);
-	//TestInsert(a, example, size);
 	HashTable b = (*tableExample);
 	EXPECT_EQ((*tableExample).size(), b.size());
 	EXPECT_FALSE(b.empty());
@@ -140,7 +130,6 @@ TEST_F(TableTesting, OperationsTesting) {
 		EXPECT_THROW(b.at(example[i].key), std::out_of_range);
 		EXPECT_TRUE(b.insert(example[i].key, example[i].value));
 	}
-	//std::cout << "Я дошёл до метки 5" << std::endl;
 }
 
 TEST_F(TableTesting, ResizeTests) {
@@ -152,16 +141,10 @@ TEST_F(TableTesting, ResizeTests) {
 	a.insert("Nnn=", b);
 	a = (*tableExample);
 	TestContain(a, example, size);
-	//std::cout << "Я дошёл до метки 6" << std::endl;
 }
 
 TEST_F(TableTesting, SwapTests) {
-	//size_t size = 1000;
 	HashTable a;
-	//std::vector<Data> example(size);
-	//FillExampleArray(example, size);
-	//TestInsert(a, example, size);
-	//TestContain(a, example, size);
 	Value av = { 3,3 };
 	a.insert("bbb", av);
 	a.swap((*tableExample));
@@ -171,7 +154,6 @@ TEST_F(TableTesting, SwapTests) {
 	EXPECT_EQ((*tableExample).at("bbb"), av);
 	(*tableExample).swap(a);
 	TestContain((*tableExample), example, size);
-	//std::cout << "Я дошёл до метки 7" << std::endl;
 }
 
 TEST_F(TableTesting, OperatorSquareBracketsTests) {
@@ -210,7 +192,6 @@ TEST_F(TableTesting, ClearTest) {
 	EXPECT_FALSE(a == (*tableExample));
 }
 
-//Что новая ХТ является идентичной старой, а не её копией
 TEST_F(TableTesting, AssigmentOperator) {
 	HashTable a = (*tableExample);
 	EXPECT_EQ((*tableExample), a);

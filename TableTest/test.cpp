@@ -21,8 +21,8 @@ void TestContain(const HashTable & table, const std::vector<Data> & data, size_t
 	size_t i = 0;
 	for (; i < size; i++) {
 		//if (table.contains(data[i].key)) {
-			EXPECT_NO_THROW(table.at(data[i].key));
-			EXPECT_EQ(table.at(data[i].key), data[i].value);
+		EXPECT_NO_THROW(table.at(data[i].key));
+		EXPECT_EQ(table.at(data[i].key), data[i].value);
 		//}
 	}
 	EXPECT_EQ(table.size(), i);
@@ -33,13 +33,13 @@ void RandomString(std::vector<Data> & example, size_t size) {
 	unsigned int lenght;
 	std::ofstream out("names.txt");
 	for (unsigned int i = 0; i < size; i++) {
-		 lenght = 4 + rand() % 3;
+		lenght = 4 + rand() % 3;
 		example[i].key.reserve(lenght + 1);
 		example[i].key.push_back(unsigned char(65 + rand() % 26));
 		for (unsigned int j = 1; j < lenght; j++) {
 			example[i].key.push_back(unsigned char(97 + (rand() % 26)));
-		}	
-		out << example[i].key/* << "\t\t Name number: "<< i */<< std::endl;
+		}
+		out << example[i].key/* << "\t\t Name number: "<< i */ << std::endl;
 	}
 	//out << size << " names saved in file." << std::endl;
 	std::cout << "Array with names succesfully generated." << std::endl;
@@ -49,7 +49,7 @@ void ReadString(std::vector<Data> & example, size_t size) {
 	for (size_t i = 0; i < size; i++) {
 		std::getline(in, example[i].key);
 	}
-//	std::cout << "Array with names succesfully read to vector." << std::endl;
+	//	std::cout << "Array with names succesfully read to vector." << std::endl;
 }
 
 void TestInsert(HashTable & table, std::vector<Data> & data, size_t size) {
@@ -129,7 +129,7 @@ TEST_F(TableTesting, OperationsTesting) {
 	EXPECT_FALSE(b.empty());
 	for (int i = 0; i < size; i++) {
 		EXPECT_TRUE(b.contains(example[i].key));
-		EXPECT_FALSE(b.insert(example[i].key,example[i].value));
+		EXPECT_FALSE(b.insert(example[i].key, example[i].value));
 		EXPECT_NO_THROW(b.at(example[i].key));
 	}
 	b.clear();
@@ -137,7 +137,7 @@ TEST_F(TableTesting, OperationsTesting) {
 	EXPECT_EQ(b.size(), 0);
 	for (int i = 0; i < size; i++) {
 		EXPECT_FALSE(b.contains(example[i].key));
-		EXPECT_THROW(b.at(example[i].key),std::out_of_range);
+		EXPECT_THROW(b.at(example[i].key), std::out_of_range);
 		EXPECT_TRUE(b.insert(example[i].key, example[i].value));
 	}
 	//std::cout << "Я дошёл до метки 5" << std::endl;
@@ -163,7 +163,7 @@ TEST_F(TableTesting, SwapTests) {
 	//TestInsert(a, example, size);
 	//TestContain(a, example, size);
 	Value av = { 3,3 };
-	a.insert("bbb",av);
+	a.insert("bbb", av);
 	a.swap((*tableExample));
 	EXPECT_THROW(a.at("bbb"), std::out_of_range);
 	TestContain(a, example, size);
@@ -180,7 +180,7 @@ TEST_F(TableTesting, OperatorSquareBracketsTests) {
 		EXPECT_EQ((*tableExample)[example[i].key], example[i].value);
 	}
 
-	EXPECT_EQ(Value('l','p'), (*tableExample)["jjjjjjj"] = Value('l', 'p'));
+	EXPECT_EQ(Value('l', 'p'), (*tableExample)["jjjjjjj"] = Value('l', 'p'));
 	EXPECT_NO_THROW((*tableExample).at("jjjjjjj"));
 	EXPECT_EQ(Value(), (*tableExample)["ffffffff"]);
 	EXPECT_NO_THROW((*tableExample).at("ffffffff"));
@@ -206,7 +206,7 @@ TEST_F(TableTesting, ClearTest) {
 	EXPECT_EQ(a, (*tableExample));
 	a.clear();
 	EXPECT_TRUE(a.empty());
-	EXPECT_EQ(a.size(),0);
+	EXPECT_EQ(a.size(), 0);
 	EXPECT_FALSE(a == (*tableExample));
 }
 

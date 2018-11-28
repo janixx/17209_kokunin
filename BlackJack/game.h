@@ -4,10 +4,20 @@ enum class _Game : unsigned char {
 	NO = 0x00
 };
 
-enum class Parametr : unsigned char {
-	ONE,
-	TWO,
-	THREE
+enum class CardGivMode : unsigned char {
+	SIMPLE = 0xFF,
+	DEFAULT = 0x00
+};
+
+enum class GameMode : unsigned char {
+	DETAILED,
+	NOT_DETAILED,
+	TOURNAMENT
+};
+
+struct GConfigs {
+	CardGivMode cMod;
+	GameMode gMod;
 };
 
 class Game {
@@ -17,5 +27,6 @@ class Game {
 public:
 	static void startGame() { _isGame = _Game::YES; }
 	static void stopGame() { _isGame = _Game::NO; }
-	Game(unsigned int, Parametr, std::vector<Strategy *> &);
+	Game(unsigned int, GConfigs, std::vector<Strategy *> &);
+	~Game();
 };

@@ -50,7 +50,7 @@ private:
 	unsigned char N;
 	Card * deck;
 public:
-	static Card * InitialDeck();
+	static Card * InitialDeck(bool);
 	Deck(unsigned char);
 	~Deck() { delete[] start_deck; delete[] deck; }
 	void PrintParam();

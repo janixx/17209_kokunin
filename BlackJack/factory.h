@@ -18,7 +18,6 @@ public:
 		Creator creator = it->second;
 		Strategy * s = creator();
 		return s;
-		//или return it->second();
 	}
 	bool regStrategy(const ID & id, const Creator & creator) {
 		creators[id] = creator;//грабли -- перерегистрация (register twice)
@@ -26,14 +25,9 @@ public:
 	}
 
 	static Factory * getInstance() {
-		static Factory f;//время жизни -- от первого входа в функцию до конца прогаммы
-						//область видимости -- эта функция
-						//в первый раз создаём, в отсальные не меняем
+		static Factory f;
 		return &f;
 	}
-	//статический метод -- метод для которого не нужен объект:
-	//нет this'a
-	//может обращаться к приватной части
 private:
 	Factory() = default;
 	Factory(const Factory &) = delete;

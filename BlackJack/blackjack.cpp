@@ -1,27 +1,32 @@
 #include "blackjack.h"
 
 //const Card * Deck::start_deck = Deck::InitialDeck();
+//bool Deck::isDeckInit = false;
 
-Card * Deck::InitialDeck(bool simple) {
-	if (!simple) {
-		Card * _deck = new Card[size];
+void Deck::firstInit() {
+	isDeckInit = false;
+}
+
+void Deck::InitialDeck() {
+	if (!isDeckInit) {
+		start_deck = new Card[size];
 		unsigned char i = 0u, j = 0u, cnt = 0u;
 		for (; i < 4; i++) {
 			for (j = 0u; j < size / 4; j++) {
-				_deck[cnt].number = j + (15 - size / 4);
-				_deck[cnt].suit = Suits(i);
+				start_deck[cnt].number = j + (15 - size / 4);
+				start_deck[cnt].suit = Suits(i);
 				if (j == size / 4 - 1)
-					_deck[cnt].weight = 11;
+					start_deck[cnt].weight = 11;
 				else if ((j >= size / 4 - 5) && (j <= size / 4 - 2))
-					_deck[cnt].weight = 10;
+					start_deck[cnt].weight = 10;
 				else
-					_deck[cnt].weight = j + (15 - size / 4);
+					start_deck[cnt].weight = j + (15 - size / 4);
 				cnt++;
 			}
 		}
-		return _deck;
 	}
-	return nullptr;
+	isDeckInit = true;
+	return;
 }
 
 void Deck::PrintParam() {
@@ -43,17 +48,26 @@ void Deck::PrintParam() {
 	}
 }
 
-Deck::Deck(unsigned char n, bool simple) : N(n) {
-	deck = new Card[N * size];
-	unsigned int i, tmp;
-	srand(time(0));
-	if (simple) {
-		for (i = 0u; i < (unsigned int)(N * size); i++) {
-			deck[i].number = deck[i].weight = unsigned char(1 + rand() % 9);
-			deck[i].suit = Suits(0);
-		}
-		return;
+Deck::Deck() {
+	topCard = 5u * size - 1u;
+	deck = new Card[topCard + 1u];
+	unsigned int i;
+	srand(unsigned int(time(0)));
+	for (i = 0u; i < (unsigned int)(N * size); i++) {
+		deck[i].number = deck[i].weight = unsigned char(1 + rand() % 9);
+		deck[i].suit = Suits(0);
 	}
+	return;
+}
+
+Deck::Deck(unsigned char n) : N(n) {
+	topCard = N * size - 1u;
+	deck = new Card[topCard + 1u];
+	unsigned int i, tmp;
+	srand(unsigned int(time(0)));
+
+	if (!isDeckInit)
+		InitialDeck();
 
 	for (i = 0u; i < (unsigned int)(N * size); i++)
 		deck[i] = start_deck[i % size];
@@ -63,4 +77,10 @@ Deck::Deck(unsigned char n, bool simple) : N(n) {
 		if (tmp != i)
 			std::swap(deck[i], deck[tmp]);
 	}
+}
+
+Card & Deck::getCard() {
+	if (topCard > 1u)
+		return deck[topCard--];
+	return deck[0u];
 }

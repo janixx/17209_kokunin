@@ -1,13 +1,14 @@
 #include "FirstStr.h"
 namespace {
-	Strategy * newSevPointStr() {
+	Strategy * newFirstStr() {
 		return new FirstStr;
 	}
 	bool ok = Factory <std::string, Strategy * (*)()>::getInstance()
-		->regStrategy("seventeen point strategy", (Strategy * (*)())newSevPointStr);
+		->regStrategy("first", (Strategy * (*)())newFirstStr);
 };
 
 Decision FirstStr::decide (const StackCard & stack) {
 	get_score(stack);
-	return ((StrategyImp::score < 17u) ?  Decision::NEXT : Decision::STOP);
+	unsigned int aaa = StrategyImp::score;
+	return ((aaa < 17u) ?  Decision::NEXT : Decision::STOP);
 }

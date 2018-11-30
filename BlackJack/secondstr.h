@@ -1,16 +1,13 @@
 #pragma once
 #include "factory.h"
-//#include "strategy.h"
 #include "StrategyImp.h"
 #ifndef FIRST_H
 #define FIRST_H
-
-
-class FirstStr : public StrategyImp {
+class SecondStr : public StrategyImp {
 public:
 	Decision decide(const StackCard & stack) override;
-	FirstStr() { score = 0u; }
-	~FirstStr() {}
+	SecondStr() { score = 0u; }
+	~SecondStr() {}
 };
 
 #endif

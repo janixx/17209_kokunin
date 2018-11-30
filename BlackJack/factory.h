@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 #include "strategy.h"
+#ifndef FACTORY_H
+#define FACTORY_H
 
 template<class ID , class Creator>
 class Factory {
@@ -34,3 +36,5 @@ private:
 	Factory & operator=(const Factory &) = delete;//методы удалены(их нет, фабрику нельзя создать)
 
 };
+
+#endif

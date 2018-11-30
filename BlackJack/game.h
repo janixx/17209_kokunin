@@ -1,4 +1,9 @@
 #include "StrategyImp.h"
+#include "blackjack.h"
+
+#ifndef GAME_H
+#define GAME_H
+
 enum class _Game : bool {
 	YES = 0x1,
 	NO = 0x0
@@ -32,14 +37,18 @@ class Game {
 	std::vector<Decision> decisions;
 	GConfigs & configs;
 	Deck deck;
-public:
-	static void startGame() { _isGame = _Game::YES; }
-	static void stopGame() { _isGame = _Game::NO; }
-	Game(GConfigs &, std::vector<Strategy *> &);
-	~Game() {}
-	void Play();
+private:
 	void Detailed();
 	void Fast();
 	void Tournament();
 	void ResultsCalculating();
+public:
+	static void startGame() { _isGame = _Game::YES; }
+	static void stopGame() { _isGame = _Game::NO; }
+	Game() = delete;
+	Game(GConfigs &, std::vector<Strategy *> &);
+	~Game() {}
+	void Play();
 };
+
+#endif

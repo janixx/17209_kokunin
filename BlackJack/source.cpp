@@ -2,8 +2,9 @@
 #include "game.h"
 #include "factory.h"
 #include "strategy.h"
+#include "StrategyImp.h"
 
-void ParametrsProcessing(GConfigs mode, std::vector<std::string> & nms, std::vector<std::string> & par) {
+void ParametrsProcessing(GConfigs & mode, std::vector<std::string> & nms, std::vector<std::string> & par) {
 	unsigned int i;
 	for (i = 0u; i < par.size(); i++) {
 		if (par[i] == "--mode=detailed") {
@@ -29,19 +30,20 @@ int main(int argc, char *argv[]) {
 		std::cout << "Bad input" << std::endl;
 		return 1;
 	}
-	Deck::firstInit();	
+	//Deck::firstInit();	
 
 
 	int i;
 	std::vector<std::string> parametrs(0);
 	std::vector<std::string> names(0);
 	GConfigs gamemode;
-	for (i = 1; i <= argc; i++)
+	for (i = 1; i < argc; i++)
 		parametrs.push_back(std::string(argv[i]));
-	ParametrsProcessing(gamemode, names, parametrs);
 
+	ParametrsProcessing(gamemode, names, parametrs);
 	std::vector<Strategy *> strategies;
-	for (int i = 1; i < argc; ++i) {
+	Deck deck;
+	for (int i = 0; i < names.size(); ++i) {
 		Factory<std::string, Strategy * (*)()> * f = Factory<std::string, Strategy * (*)()>::getInstance();
 		Strategy * s = f->createStrategyByID(names[i]);
 		if (nullptr == s) {
@@ -50,6 +52,7 @@ int main(int argc, char *argv[]) {
 		}
 		strategies.push_back(s);
 	}
-
+	Game game(gamemode, strategies);
+	game.Play();
 	return 0;
 }

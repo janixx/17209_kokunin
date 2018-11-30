@@ -57,12 +57,12 @@ void Game::Detailed() {
 	unsigned int i = 0u;
 	for (; i < configs.countStr; i++) {
 		stackcard[i].push(deck.getCard());
-		strategies[i]->decide(stackcard[i]);
-		std::cout << i << " strategy: \n"
-			<< "Summary score: " << stackcard[i].score() << ";\n"
-			<< "Score on turn: " << stackcard[i].top().weight << ";\n"
-			<< i << "Strategy decision: ";
-		std::cout << (bool(decisions[i]) ? "continue game." : "stop game") << std::endl;
+		decisions[i] = strategies[i]->decide(stackcard[i]);
+		std::cout << " "<< i << " strategy: \n"
+			<< "\tSummary score: " << static_cast<unsigned int>(stackcard[i].score()) << ";\n"
+			<< "\tScore on turn: " << static_cast<unsigned int>(stackcard[i].top().weight) << ";\n"
+			<< i + 1u << "'st " << "Strategy decision: ";
+		std::cout << (bool(decisions[i]) ? "continue the game." : "stop the game") << std::endl;
 	}
 	for (i = 0u; i < configs.countStr; i++) {
 		if (bool(decisions[i])) {
@@ -89,7 +89,7 @@ void Game::ResultsCalculating() {
 			if (stackcard[i].score() <= 21u) {
 				if (stackcard[i].score() > stackcard[championNumber].score() || stackcard[championNumber].score() > 21u)
 					championNumber = i;
-				else if (stackcard[i].score() == stackcard[championNumber].score()) {
+				else if (stackcard[i].score() == stackcard[championNumber].score() && championNumber != i) {
 					std::cout << "Drawn game! At least two strategies scored equal score!" << std::endl;
 					//FIX IT! ADD FUNCTION/SMTH THAT PRINT TABLE WITH RESULTS OF GAME
 					return;
@@ -101,7 +101,7 @@ void Game::ResultsCalculating() {
 			//THE SAME!!!!!!!!!!!!!!!!
 			return;
 		}
-		std::cout << "Strategy number " << championNumber << " won the game." << std::endl;
+		std::cout << "Strategy number " << championNumber + 1u << " won the game." << std::endl;
 		//ADD OUTPUT!!!!!
 		break;
 

@@ -2,26 +2,10 @@
 
 _Game Game::_isGame = _Game::NO;
 
-Game::Game(GConfigs & mode, std::vector<Strategy*> & str) : strategies(str), configs(mode) {
-	(mode.cMod == CardGivMode::SIMPLE) ? deck = Deck() : deck = Deck(mode.deckSize);
+Game::Game(GConfigs & mode, std::vector<Strategy*> & str) : strategies(str), configs(mode),
+		deck(mode.deckSize, mode.cMod) {
 	stackcard.resize(mode.countStr);
 	decisions.resize(mode.countStr);
-}
-
-GConfigs::GConfigs(GConfigs & other) : cMod(other.cMod), gMod(other.gMod),
-		deckSize(other.deckSize), countStr(other.countStr) {}
-
-GConfigs::GConfigs() : cMod(CardGivMode::SIMPLE), gMod(GameMode::DETAILED),
-		deckSize(1u), countStr(2u) {}
-
-GConfigs & GConfigs::operator=(const GConfigs & other) {
-	if (this != &other) {
-		cMod = other.cMod;
-		gMod = other.gMod;
-		deckSize = other.deckSize;
-		countStr = other.countStr;
-	}
-	return *this;
 }
 
 void Game::Play() {
@@ -55,17 +39,20 @@ void Game::Play() {
 
 void Game::Detailed() {
 	unsigned int i = 0u;
-	for (; i < configs.countStr; i++) {
-		stackcard[i].push(deck.getCard());
-		decisions[i] = strategies[i]->decide(stackcard[i]);
-		std::cout << " "<< i << " strategy: \n"
-			<< "\tSummary score: " << static_cast<unsigned int>(stackcard[i].score()) << ";\n"
-			<< "\tScore on turn: " << static_cast<unsigned int>(stackcard[i].top().weight) << ";\n"
-			<< i + 1u << "'st " << "Strategy decision: ";
-		std::cout << (bool(decisions[i]) ? "continue the game." : "stop the game") << std::endl;
-	}
+	do {
+		if (!bool(decisions[i])) {
+			stackcard[i].push(deck.getCard());
+			decisions[i] = strategies[i]->decide(stackcard[i]);
+			std::cout << " " << i + 1u << " strategy: \n"
+				<< "\tSummary score: " << static_cast<unsigned int>(stackcard[i].score()) << ";\n"
+				<< "\tScore on turn: " << static_cast<unsigned int>(stackcard[i].top().weight) << ";\n"
+				<< i + 1u << "'st " << "Strategy decision: ";
+			std::cout << (!bool(decisions[i]) ? "continue the game." : "stop the game") << std::endl;
+		}
+		i++;
+	} while (i < configs.countStr);
 	for (i = 0u; i < configs.countStr; i++) {
-		if (bool(decisions[i])) {
+		if (!bool(decisions[i])) {
 			std::cout << "Press any key to continue or Esc to exit" << std::endl;
 			return;
 		}
@@ -92,6 +79,7 @@ void Game::ResultsCalculating() {
 				else if (stackcard[i].score() == stackcard[championNumber].score() && championNumber != i) {
 					std::cout << "Drawn game! At least two strategies scored equal score!" << std::endl;
 					//FIX IT! ADD FUNCTION/SMTH THAT PRINT TABLE WITH RESULTS OF GAME
+					PrintResuls();
 					return;
 				}
 			}
@@ -99,10 +87,12 @@ void Game::ResultsCalculating() {
 		if (stackcard[championNumber].score() > 21u) {
 			std::cout << "All strategies lost the game." << std::endl;
 			//THE SAME!!!!!!!!!!!!!!!!
+			PrintResuls();
 			return;
 		}
 		std::cout << "Strategy number " << championNumber + 1u << " won the game." << std::endl;
 		//ADD OUTPUT!!!!!
+		PrintResuls();
 		break;
 
 	case(GameMode::TOURNAMENT):
@@ -110,4 +100,23 @@ void Game::ResultsCalculating() {
 		break;
 	}
 
+}
+
+void Game::PrintResuls() {
+	std::cout << " " << configs.countStr << " strategies competed in the game." << std::endl;
+	std::cout << "\tTable with results:" << std::endl;
+	std::cout << "   Number:    | Num of moves:|     Score:   " << std::endl;
+	unsigned int i = 0u;
+	
+	for (; i < configs.countStr; i++) {
+		std::cout.width(13);
+		std::cout.setf(std::ios::left);
+		std::cout << "    " << i + 1 <<  "|";
+		std::cout.width(13);
+		std::cout.setf(std::ios::left);
+		std::cout << "    " << static_cast<unsigned int>(stackcard[i].size()) << "|";
+		std::cout.width(13);
+		std::cout.setf(std::ios::left);
+		std::cout << "    " << static_cast<unsigned int>(stackcard[i].score()) << std::endl;
+	}
 }

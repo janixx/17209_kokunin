@@ -17,7 +17,17 @@ void ParametrsProcessing(GConfigs & mode, std::vector<std::string> & nms, std::v
 			mode.gMod = GameMode::TOURNAMENT;
 		}
 		else if (par[i].front() == '-') {
-			///
+			//std::string::iterator it;
+			//it = par[i].begin();
+			//unsigned int j = 0u;
+			//std::string templ = "--configs";
+			//for (; j < templ.length() && it + j < par[i].end(); j++) {
+				//if (*(it + j) != templ[j]) {
+					//nms.push_back(par[i]);
+					//break;
+				//}
+			//}
+			mode.configDir = par[i];
 		}
 		else {
 			nms.push_back(par[i]);
@@ -48,6 +58,8 @@ int main(int argc, char *argv[]) {
 		Strategy * s = f->createStrategyByID(names[i]);
 		if (nullptr == s) {
 			std::cerr << "Unikown unit" << names[i] << std::endl;
+			names.erase(names.begin() + i);
+			i--;//?????
 			continue;
 		}
 		strategies.push_back(s);

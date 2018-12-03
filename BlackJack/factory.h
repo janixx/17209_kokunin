@@ -4,7 +4,8 @@
 #include <string>
 #include "strategy.h"
 #ifndef FACTORY_H
-#define FACTORY_H
+
+#define FACTORY_H 3
 
 template<class ID , class Creator>
 class Factory {

@@ -8,8 +8,38 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <iterator> 
+
 #ifndef BLACKJACK_H
-#define BLACKJACK_H
+#define BLACKJACK_H 2
+
+enum class _Game : bool {
+	YES = 0x1,
+	NO = 0x0
+};
+
+enum class CardGivMode : unsigned char {
+	SIMPLE = 0xFF,
+	DEFAULT = 0x00
+};
+
+enum class GameMode : unsigned char {
+	DETAILED = 0x00,
+	FAST = 0x01,
+	TOURNAMENT = 0x02
+};
+
+struct GConfigs {
+	CardGivMode cMod;
+	GameMode gMod;
+	std::string configDir;
+	unsigned char deckSize;
+	unsigned int countStr;
+	GConfigs(GConfigs & other);
+	GConfigs();
+	GConfigs & operator=(const GConfigs & other);
+};
+
 enum class Suits {
 	HEART,
 	DIAMOND,
@@ -18,8 +48,8 @@ enum class Suits {
 };
 
 enum class Decision : bool {
-	STOP = 0x0,
-	NEXT = 0x1
+	STOP = 0x1,
+	NEXT = 0x0
 };
 
 
@@ -35,14 +65,13 @@ private:
 	static std::vector<Card> start_deck;
 	static bool isDeckInit;
 
-	unsigned char N;
+	unsigned char N = 1u;
 	unsigned int topCard;
 	std::vector<Card> deck;
 public:
 	static void InitialDeck();
 	static void firstInit() { isDeckInit = false; }
-	Deck(unsigned char);
-	Deck();
+	Deck(unsigned char n = 1u, CardGivMode mode = CardGivMode::SIMPLE);
 	~Deck() {}
 	Card & getCard();
 	void PrintParam();

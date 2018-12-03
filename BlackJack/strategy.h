@@ -1,7 +1,7 @@
 #pragma once
 #include "blackjack.h"
 #ifndef STRATEGY_H
-#define STRATEGY_H
+#define STRATEGY_H 4
 
 class Strategy {
 public:

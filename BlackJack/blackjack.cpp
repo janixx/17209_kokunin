@@ -1,4 +1,5 @@
 #include "blackjack.h"
+#include "game.h"
 
 //const Card * Deck::start_deck = Deck::InitialDeck();
 //bool Deck::isDeckInit = false;
@@ -25,42 +26,36 @@ void Deck::PrintParam() {
 	}
 }
 
-Deck::Deck() : N(5u) {
-	topCard = 5u * size - 1u;
+Deck::Deck(unsigned char n, CardGivMode mode) : N(n) {
+	topCard = N * size - 1u;
 	deck.resize(topCard + 1u);
 	unsigned int i;
 	srand(unsigned int(time(0)));
-	for (i = 0u; i <= topCard; i++) {
-		deck[i].number = static_cast<unsigned char>(1 + rand() % 9);
-		deck[i].weight = deck[i].number;
+	if (mode == CardGivMode::SIMPLE) {
+		for (i = 0u; i <= topCard; i++) {
+			deck[i].number = static_cast<unsigned char>(1 + rand() % 9);
+			deck[i].weight = deck[i].number;
+		}
+		return;
 	}
-	return;
-}
+	else {
+		unsigned int tmp;
+		if (!Deck::isDeckInit)
+			Deck::InitialDeck();
 
-Deck::Deck(unsigned char n) : N(n) {
-	topCard = N * size - 1u;
-	deck.reserve(topCard + 1u);
-	unsigned int i, tmp;
-	srand(unsigned int(time(0)));
+		for (i = 0u; i <= topCard; i++)
+			deck[i] = start_deck[i % size];
 
-	if (!Deck::isDeckInit)
-		Deck::InitialDeck();
-
-	for (i = 0u; i <= topCard; i++)
-		deck[i] = start_deck[i % size];
-
-	for (i = 0u; i <= topCard; i++) {
-		tmp = rand() % (N * size);
-		if (tmp != i)
-			std::swap(deck[i], deck[tmp]);
+		for (i = 0u; i <= topCard; i++) {
+			tmp = rand() % (N * size);
+			if (tmp != i)
+				std::swap(deck[i], deck[tmp]);
+		}
 	}
 }
 
 Card & Deck::getCard() {
-	if (topCard > 1u)
-		return deck[topCard--];
-
-	return deck[0u];
+	return ((topCard > 1u) ? deck[topCard--] : deck[0u]);
 }
 
 void Deck::InitialDeck() {
@@ -85,4 +80,20 @@ void Deck::InitialDeck() {
 		}
 	}
 	isDeckInit = true;
+}
+
+GConfigs::GConfigs(GConfigs & other) : cMod(other.cMod), gMod(other.gMod),
+configDir(other.configDir), deckSize(other.deckSize), countStr(other.countStr) {}
+
+GConfigs::GConfigs() : cMod(CardGivMode::SIMPLE), gMod(GameMode::DETAILED)
+, deckSize(1u), countStr(2u){}
+
+GConfigs & GConfigs::operator=(const GConfigs & other) {
+	if (this != &other) {
+		cMod = other.cMod;
+		gMod = other.gMod;
+		deckSize = other.deckSize;
+		countStr = other.countStr;
+	}
+	return *this;
 }

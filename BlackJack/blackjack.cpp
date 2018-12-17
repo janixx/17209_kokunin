@@ -1,30 +1,26 @@
 #include "blackjack.h"
 #include "game.h"
 
-//const Card * Deck::start_deck = Deck::InitialDeck();
-//bool Deck::isDeckInit = false;
+std::vector<Card> Deck::start_deck(0);
 
-std::vector<Card> Deck::start_deck;
-bool Deck::isDeckInit = false;
-
-void Deck::PrintParam() {
-	//std::ofstream out("file.txt");
-	std::cout << (unsigned int)size << std::endl;
-	std::cout << "\n";
-	for (int i = 0; i < size; i++) {
-		std::cout << "number: " << (unsigned int)start_deck[i].number << " weight: " <<
-			(unsigned int)start_deck[i].weight <<
-			" suit: " << (unsigned int)start_deck[i].suit << std::endl;
-	}
-	std::cout << "\n\n\n\n\n\n\n";
-	std::cout << "Size of sorted deck is: " << (unsigned int)size * N << std::endl;
-	std::cout << "\n";
-	for (int i = 0; i < N * size; i++) {
-		std::cout << "number: " << (unsigned int)deck[i].number << " weight: " <<
-			(unsigned int)deck[i].weight <<
-			" suit: " << (unsigned int)deck[i].suit << std::endl;
-	}
-}
+//void Deck::PrintParam() {
+//	//std::ofstream out("file.txt");
+//	std::cout << (unsigned int)size << std::endl;
+//	std::cout << "\n";
+//	for (int i = 0; i < size; i++) {
+//		std::cout << "number: " << (unsigned int)start_deck[i].number << " weight: " <<
+//			(unsigned int)start_deck[i].weight <<
+//			" suit: " << (unsigned int)start_deck[i].suit << std::endl;
+//	}
+//	std::cout << "\n\n\n\n\n\n\n";
+//	std::cout << "Size of sorted deck is: " << (unsigned int)size * N << std::endl;
+//	std::cout << "\n";
+//	for (int i = 0; i < N * size; i++) {
+//		std::cout << "number: " << (unsigned int)deck[i].number << " weight: " <<
+//			(unsigned int)deck[i].weight <<
+//			" suit: " << (unsigned int)deck[i].suit << std::endl;
+//	}
+//}
 
 Deck::Deck(unsigned char n, CardGivMode mode) : N(n) {
 	topCard = N * size - 1u;
@@ -40,7 +36,8 @@ Deck::Deck(unsigned char n, CardGivMode mode) : N(n) {
 	}
 	else {
 		unsigned int tmp;
-		if (!Deck::isDeckInit)
+
+		if (start_deck.size() == 0)
 			Deck::InitialDeck();
 
 		for (i = 0u; i <= topCard; i++)
@@ -54,13 +51,13 @@ Deck::Deck(unsigned char n, CardGivMode mode) : N(n) {
 	}
 }
 
-Card & Deck::getCard() {
+const Card & Deck::getCard() {
 	return ((topCard > 1u) ? deck[topCard--] : deck[0u]);
 }
 
 void Deck::InitialDeck() {
-	if (!isDeckInit) {
-		start_deck.reserve(size);
+	if (start_deck.size() == 0) {
+		start_deck.resize(size);
 		unsigned char i = 0u, j = 0u, cnt = 0u;
 		for (; i < 4; i++) {
 			for (j = 0u; j < size / 4; j++) {
@@ -79,14 +76,13 @@ void Deck::InitialDeck() {
 			}
 		}
 	}
-	isDeckInit = true;
 }
 
 GConfigs::GConfigs(GConfigs & other) : cMod(other.cMod), gMod(other.gMod),
 configDir(other.configDir), deckSize(other.deckSize), countStr(other.countStr) {}
 
-GConfigs::GConfigs() : cMod(CardGivMode::SIMPLE), gMod(GameMode::DETAILED)
-, deckSize(1u), countStr(2u){}
+GConfigs::GConfigs() : cMod(CardGivMode::SIMPLE), gMod(GameMode::DETAILED),
+	deckSize(1u), countStr(2u){}
 
 GConfigs & GConfigs::operator=(const GConfigs & other) {
 	if (this != &other) {

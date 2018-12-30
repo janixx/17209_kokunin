@@ -3,6 +3,14 @@
 
 std::vector<Card> Deck::start_deck(0);
 
+const Card & Card::operator=(const Card & other) {
+	if (this != &other) {
+		number = other.number;
+		weight = other.weight;
+		suit = other.suit;
+	}
+	return *this;
+}
 //void Deck::PrintParam() {
 //	//std::ofstream out("file.txt");
 //	std::cout << (unsigned int)size << std::endl;
@@ -22,9 +30,8 @@ std::vector<Card> Deck::start_deck(0);
 //	}
 //}
 
-Deck::Deck(unsigned char n, CardGivMode mode) : N(n) {
+void Deck::shufle() {
 	topCard = N * size - 1u;
-	deck.resize(topCard + 1u);
 	unsigned int i;
 	srand(unsigned int(time(0)));
 	if (mode == CardGivMode::SIMPLE) {
@@ -36,7 +43,6 @@ Deck::Deck(unsigned char n, CardGivMode mode) : N(n) {
 	}
 	else {
 		unsigned int tmp;
-
 		if (start_deck.size() == 0)
 			Deck::InitialDeck();
 
@@ -48,11 +54,18 @@ Deck::Deck(unsigned char n, CardGivMode mode) : N(n) {
 			if (tmp != i)
 				std::swap(deck[i], deck[tmp]);
 		}
+		return;
 	}
 }
 
+
 const Card & Deck::getCard() {
-	return ((topCard > 1u) ? deck[topCard--] : deck[0u]);
+	if (topCard == 0u) {
+		Card & ret = deck[0u];
+		shufle();
+		return ret;
+	}
+	return deck[topCard--];
 }
 
 void Deck::InitialDeck() {
@@ -76,20 +89,4 @@ void Deck::InitialDeck() {
 			}
 		}
 	}
-}
-
-GConfigs::GConfigs(GConfigs & other) : cMod(other.cMod), gMod(other.gMod),
-configDir(other.configDir), deckSize(other.deckSize), countStr(other.countStr) {}
-
-GConfigs::GConfigs() : cMod(CardGivMode::SIMPLE), gMod(GameMode::DETAILED),
-	deckSize(1u), countStr(2u){}
-
-GConfigs & GConfigs::operator=(const GConfigs & other) {
-	if (this != &other) {
-		cMod = other.cMod;
-		gMod = other.gMod;
-		deckSize = other.deckSize;
-		countStr = other.countStr;
-	}
-	return *this;
 }

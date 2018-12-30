@@ -5,7 +5,7 @@
 #include <string>
 #include "strategy.h"
 
-template<class ID , class Creator>
+template<class ID , class Creator = Strategy * (*)()>
 class Factory {
 	std::map < ID, Creator > creators;
 public:
@@ -35,5 +35,4 @@ private:
 	Factory & operator=(const Factory &) = delete;//методы удалены(их нет, фабрику нельзя создать)
 
 };
-
 #endif

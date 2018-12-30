@@ -6,7 +6,8 @@
 
 class FirstStr : public StrategyImp {
 public:
-	Decision decide(const StackCard & stack) override;
+	void init(const std::string & path) {}
+	Decision decide(const StackCard & stack, const std::vector<Card> front, const std::vector<Decision> decisions) override;
 	std::string getName() override;
 	std::string getID() override;
 	FirstStr() { score = 0u; }

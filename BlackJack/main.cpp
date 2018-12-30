@@ -1,5 +1,5 @@
 #include "blackjack.h"
-#include "exception.h"
+//#include "exception.h"
 #include "factory.h"
 #include "game.h"
 #include "strategy.h"
@@ -18,18 +18,13 @@ void ParametrsProcessing(GConfigs & mode, std::vector<std::string> & ID, std::ve
 			mode.gMod = GameMode::TOURNAMENT;
 		}
 		else if (par[i].front() == '-') {
-			std::string::iterator it = par[i].begin();
-			std::string tmp = "--configs";
-			std::string::iterator jt = tmp.begin();
-			for (; (jt < tmp.end()) && (it < par[i].end()); jt++, it++) {
-				if (*jt != *it) {
-					std::cout << "Undefined argument for programm!!" << par[i] << std::endl;
-					throw BadArguments();
-				}
+			std::string tmp = "--configs=";
+			if (std::strncmp(par[i].c_str(), "--configs=", tmp.length())) {
+				std::cout << "Undefined argument for programm!!" << par[i] << std::endl;
+				continue;
 			}
-			it = par[i].begin() + 9;
-			jt = par[i].end();
-			std::copy(it, jt, mode.configDir);
+			mode.configDir.resize(par[i].length() - tmp.length());
+			std::copy(par[i].begin() + tmp.length(), par[i].end(), mode.configDir.begin());
 		}
 		else {
 			ID.push_back(par[i]);
@@ -38,6 +33,7 @@ void ParametrsProcessing(GConfigs & mode, std::vector<std::string> & ID, std::ve
 }
 
 int main(int argc, char *argv[]) {
+	std::cout << "This is a programm for simulating 'BlackJack Retarded' game." << std::endl;
 	if (argc < 2) {
 		std::cout << "Bad input" << std::endl;
 		return 1;
@@ -45,27 +41,28 @@ int main(int argc, char *argv[]) {
 
 	std::vector<std::string> parametrs(0);
 	std::vector<std::string> ID(0);
-	GConfigs mode;
+	GConfigs configs;
 	for (int i = 1; i < argc; i++)
 		parametrs.push_back(std::string(argv[i]));
-	try {
-		ParametrsProcessing(mode, ID, parametrs);
-	}
-	catch (BadArguments a) {
-		a.what();
-	}
-	std::vector<Strategy *> strategies;
+	
+	ParametrsProcessing(configs, ID, parametrs);
+	std::vector<Strategy *> strategies(0);
 	for (int i = 0; i < ID.size(); ++i) {
 		Factory<std::string, Strategy * (*)()> * f = Factory<std::string, Strategy * (*)()>::getInstance();
 		Strategy * s = f->createStrategyByID(ID[i]);
 		if (nullptr == s) {
-			std::cerr << "Unikown unit" << ID[i] << std::endl;
+			std::cerr << "Unikown strategy ID " << ID[i] << std::endl;
 			continue;
 		}
 		strategies.push_back(s);
 	}
+	configs.countStr = static_cast<unsigned int>(strategies.size());
+	if (configs.countStr < 2) {
+		std::cerr << " Too few strategies identified, impossible to continue the game" << std::endl;
+		return 0;
+	}
 
-	Game game(mode, std::move(strategies));
+	Game game(configs, std::move(strategies));
 	Gui gui(&game);
 	game.Play(&gui);
 	return 0;

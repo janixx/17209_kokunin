@@ -6,10 +6,9 @@
 class BadArguments : public std::exception {
 public:
 	int what() {
-		std::cout << "govno";
+		std::cout << "Undefined strategy ID" << std::endl;
 		return 0;
 	}
 };
 class MemoryError : public std::exception {};
-
 #endif

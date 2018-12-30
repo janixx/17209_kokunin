@@ -5,7 +5,6 @@
 #include <iostream>
 
 class Dominate : public StrategyImp {
-	//std::ifstream * file;
 	unsigned int contrl;
 public:
 	void init(const std::string & path);
@@ -13,7 +12,6 @@ public:
 	std::string getName() override final;
 	std::string getID() override final;
 
-	//std::fstream * getFileStream();
 	Dominate() { StrategyImp::score = 0u; }
 	~Dominate() {}
 };

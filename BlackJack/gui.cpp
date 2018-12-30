@@ -53,7 +53,10 @@ void Gui::TableResults(const std::vector<unsigned char>& table) const {
 	for (i = 0u; i < game->configs.countStr; i++) {
 		std::cout << "   " << i + 1u << "  ";
 		for (j = 0u; j < game->configs.countStr;j++) {
-			std::cout << "|  " << static_cast<int>(table[i * game->configs.countStr + j]) << "  ";
+			if (i == j) 
+				std::cout << "|  " << static_cast<char>('~') << "  ";
+			else
+				std::cout << "|  " << static_cast<int>(table[i * game->configs.countStr + j]) + 1 << "  ";
 		}
 		std::cout << std::endl;
 	}
@@ -80,9 +83,9 @@ void Gui::TourneyResults(std::vector<unsigned char> results) const {
 	if (winners.size() > 1u) {
 		std::cout << "Drawn game! At least two strategies scored equal score!" << std::endl;
 		std::cout << "\t Strategies with the highest score:" << std::endl;
-		std::cout << "NUMBER |" << "SCORE  |" << "\tNAME:" << std::endl;
+		std::cout << "NUMBER|" << "SCORE  |" << "\tNAME:" << std::endl;
 		for (auto it : winners)
-			std::cout << "   " << it + 1u << "   |   " << results[it] << "   |"
+			std::cout << "   " << it + 1u << "  |   " << static_cast<int>(results[it]) << "  |"
 				<< game->strategies[it]->getName() << std::endl;
 		
 	}

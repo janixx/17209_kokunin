@@ -59,11 +59,16 @@ int main(int argc, char *argv[]) {
 	configs.countStr = static_cast<unsigned int>(strategies.size());
 	if (configs.countStr < 2) {
 		std::cerr << " Too few strategies identified, impossible to continue the game" << std::endl;
+		delete strategies.front();
 		return 0;
 	}
 
 	Game game(configs, std::move(strategies));
 	Gui gui(&game);
 	game.Play(&gui);
+
+	for (auto it : strategies)
+		delete it;
+
 	return 0;
 }

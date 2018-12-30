@@ -162,6 +162,7 @@ void Game::Tournament() {
 			results[tmp]++;
 		}
 	}
+
 	gui->TableResults(matrix);
 	gui->TourneyResults(results);
 	stopGame();

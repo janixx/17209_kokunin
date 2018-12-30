@@ -2,6 +2,7 @@
 #define STRATEGY_H
 
 #include "blackjack.h"
+#include "exception.h"
 
 class Strategy {
 public:

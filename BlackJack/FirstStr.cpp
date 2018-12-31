@@ -10,7 +10,7 @@ namespace {
 		->regStrategy(ID, (Strategy * (*)())newFirstStr);
 };
 
-Decision FirstStr::decide(const StackCard & stack, const std::vector<Card> front, const std::vector<Decision> decisions) {
+Decision FirstStr::decide(const StackCard & stack, const std::vector<Card> & front, const std::vector<Decision> & decisions) {
 	getScore(stack);
 	unsigned int aaa = StrategyImp::score;
 	return ((aaa < 17u) ?  Decision::NEXT : Decision::STOP);

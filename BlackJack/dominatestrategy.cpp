@@ -25,7 +25,7 @@ void Dominate::init(const std::string & path) {
 	file.close();
 }
 
-Decision Dominate::decide(const StackCard & stack, const std::vector<Card> front, const std::vector<Decision> decisions) {
+Decision Dominate::decide(const StackCard & stack, const std::vector<Card> & front, const std::vector<Decision> & decisions) {
 	getScore(stack);
 
 	return ((StrategyImp::score < contrl) ? Decision::NEXT : Decision::STOP);

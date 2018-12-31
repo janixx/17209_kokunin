@@ -9,7 +9,7 @@ namespace {
 		->regStrategy(ID, (Strategy * (*)())newSecondStr);
 };
 
-Decision SecondStr::decide(const StackCard & stack, const std::vector<Card> front, const std::vector<Decision> decisions) {
+Decision SecondStr::decide(const StackCard & stack, const std::vector<Card> & front, const std::vector<Decision> & decisions) {
 	getScore(stack);
 	return ((StrategyImp::score < 16u && StrategyImp::score > 2u) ? Decision::NEXT : Decision::STOP);
 }

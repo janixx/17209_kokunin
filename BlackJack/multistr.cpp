@@ -1,16 +1,16 @@
-#include "difficult.h"
+#include "multistr.h"
 
 namespace {
-	Strategy * newDifficult() {
-		return new Difficult;
+	Strategy * newMulti() {
+		return new Multi;
 	}
-	std::string ID = "difficult";
-	std::string name = "Difficult strategy";
+	std::string ID = "multi";
+	std::string name = "Multi strategy";
 	bool ok = Factory <std::string, Strategy * (*)()>::getInstance()
-		->regStrategy(ID, (Strategy * (*)())newDifficult);
+		->regStrategy(ID, (Strategy * (*)())newMulti);
 }
 
-void Difficult::init(const std::string & path) {
+void Multi::init(const std::string & path) {
 	std::ifstream file;
 	std::string fullpath;
 	fullpath.resize(path.length());
@@ -21,10 +21,12 @@ void Difficult::init(const std::string & path) {
 	file.open(fullpath, std::ios_base::in);
 	if (!file.is_open())
 		throw StrSettingError();
-	int count = 0, tmp = 0, i = 0, j = 0;
+	int count = 0, coef = 0, tmp = 0, i = 0, j = 0;
 	file >> count;
-	if (count < 0 || count > 21)
+	file >> coef;
+	if (count < 0 || count > 21 || coef < 1 || coef > 10)
 		throw StrSettingError();
+	coefficient = coef;
 	data.resize(count);
 	for (i = 0; i < count; i++) {
 		file >> tmp;
@@ -33,8 +35,9 @@ void Difficult::init(const std::string & path) {
 		data[i].push_back(tmp);
 		for (j = 0; j < 21; j++) {
 			file >> tmp;
-			if (tmp < 0 || tmp > 1)
+			if (tmp < 0 || tmp > 1) {
 				throw StrSettingError();
+			}
 			data[i].push_back(tmp);
 			tmp = 2;
 		}
@@ -42,7 +45,7 @@ void Difficult::init(const std::string & path) {
 	file.close();
 }
 
-Decision Difficult::decide(const StackCard & stack, const std::vector<Card> & front, const std::vector<Decision> & decisions) {
+Decision Multi::decide(const StackCard & stack, const std::vector<Card>& front, const std::vector<Decision>& decisions) {
 	getScore(stack);
 	unsigned char max = 0;
 	for (auto it : front) {
@@ -55,13 +58,21 @@ Decision Difficult::decide(const StackCard & stack, const std::vector<Card> & fr
 			break;
 	}
 	std::vector<unsigned int> & behavior = data[i < data.size() ? i : data.size() - 1];
+	unsigned char counter = 0;//how many strategies stoped the game
+	for (auto it : decisions) {
+		if (it == Decision::STOP)
+			counter++;
+	}
+	if (counter > decisions.size() / coefficient)
+		 return Decision::STOP;
+
 	return (behavior[score <= 21 ? score + 1 : 21] == 1 ? Decision::NEXT : Decision::STOP);
 }
 
-std::string Difficult::getName() {
+std::string Multi::getName() {
 	return name;
 }
 
-std::string Difficult::getID() {
+std::string Multi::getID() {
 	return ID;
 }

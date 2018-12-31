@@ -9,7 +9,7 @@ class Difficult : public StrategyImp {
 	std::vector<std::vector<unsigned int>> data;
 public:
 	void init(const std::string & path);
-	Decision decide(const StackCard & stack, const std::vector<Card> front, const std::vector<Decision> decisions) override final;
+	Decision decide(const StackCard & stack, const std::vector<Card> & front, const std::vector<Decision> & decisions) override final;
 	std::string getName() override final;
 	std::string getID() override final;
 

@@ -19,10 +19,6 @@ GConfigs & GConfigs::operator=(const GConfigs & other) {
 	return *this;
 }
 
-//void GConfigs::SetDirectoryPathSize(unsigned int size) {
-//	configDir.resize(size);
-//}
-
 Game::Game(GConfigs mode, std::vector<Strategy*> str) : strategies(str),
 		configs(mode), deck(mode.deckSize, mode.cMod), gui(nullptr) {
 	
@@ -42,12 +38,19 @@ void Game::Play(Gui * g) {
 			stackcard[i].push(deck.getCard());
 			low_card[i] = stackcard[i].low();
 		}
-		for (i = 0u; i < configs.countStr; i++) {
-			strategies[i]->init(configs.configDir);
-			decisions[i] = strategies[i]->decide(stackcard[i], low_card, decisions);
+		try {
+			for (i = 0u; i < configs.countStr; i++) {
+				strategies[i]->init(configs.configDir);
+				decisions[i] = strategies[i]->decide(stackcard[i], low_card, decisions);
 
-			if (configs.gMod == GameMode::DETAILED)
-				gui->TurnResults(i);
+				if (configs.gMod == GameMode::DETAILED)
+					gui->TurnResults(i);
+			}
+		}
+		catch (StrSettingError a) {
+			a.what();
+			stopGame();
+			return;
 		}
 		while (bool(_isGame)) {
 			Turn();
@@ -63,49 +66,12 @@ void Game::Play(Gui * g) {
 		ResultsCalculating();
 		break;
 
-	//case (GameMode::FAST):
-	//		for (i = 0u; i < configs.countStr; i++) {
-	//			stackcard[i].push(deck.getCard());
-	//			if (min_low.weight < stackcard[i].low().weight)
-	//				min_low = stackcard[i].low();
-	//			if (max_low.weight > stackcard[i].low().weight)
-	//				max_low = stackcard[i].low();
-	//		}
-	//		for (i = 0u; i < configs.countStr; i++) {
-	//			decisions[i] = strategies[i]->decide(stackcard[i], min_low, max_low);
-	//		}
-	//		while (bool(_isGame)) {
-	//			Fast();
-	//		}
-	//		ResultsCalculating();
-	//		break;
-
 	case (GameMode::TOURNAMENT):
 		Tournament();
 		break;
 
 	}
 }
-
-//void Game::Detailed() {
-//	unsigned int i = 0u, j = 0u;
-//	do {
-//		if (decisions[i] == Decision::NEXT) {
-//			stackcard[i].push(deck.getCard());
-//			decisions[i] = strategies[i]->decide(stackcard[i], min_low, max_low);
-//			gui->TurnResults(i);
-//		}
-//		
-//		i++;
-//	} while (i < configs.countStr);
-//	for (j = 0u; j < configs.countStr; j++) {
-//		if (decisions[j] == Decision::NEXT) {
-//			std::cout << "Press any key to continue or Esc to exit" << std::endl;
-//			return;
-//		}
-//	}
-//	
-//}
 
 void Game::Turn() {
 	unsigned int i = 0u;
@@ -129,29 +95,22 @@ void Game::Turn() {
 	stopGame();
 }
 
-//void Game::Fast() {
-//	unsigned int i = 0u, j = 0u;
-//	do {
-//		if (decisions[i] == Decision::NEXT) {
-//			stackcard[i].push(deck.getCard());
-//			decisions[i] = strategies[i]->decide(stackcard[i]);
-//		}
-//		i++;
-//	} while (i < configs.countStr);
-//
-//	for (j = 0u; j < configs.countStr; j++) {
-//		if (decisions[j] == Decision::NEXT)
-//			return;
-//	}
-//
-//	stopGame();
-//}
-
 void Game::Tournament() {
+	if (configs.countStr < 3) {
+		std::cout << "Received to few (" << configs.countStr << ") strategies to play in this (tournament) mode. " <<
+			"Game stoped." << std::endl;
+		return;
+	}
 	unsigned char i = 0u, j = 0u, tmp = 0u;
-	for (i = 0u; i < configs.countStr; i++)
-		strategies[i]->init(configs.configDir);
-
+	try {
+		for (i = 0u; i < configs.countStr; i++)
+			strategies[i]->init(configs.configDir);
+	}
+	catch (StrSettingError a) {
+		a.what();
+		stopGame();
+		return;
+	}
 	gui->StrategiesList();
 	std::vector<unsigned char> matrix(configs.countStr * configs.countStr);
 	std::vector<unsigned char> results(configs.countStr);

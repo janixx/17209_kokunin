@@ -17,5 +17,4 @@ public:
 	Other() { StrategyImp::score = 0u; }
 	~Other() override {}
 };
-
 #endif 

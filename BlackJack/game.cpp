@@ -1,8 +1,6 @@
 #include "game.h"
 #include "gui.h"
 
-_Game Game::_isGame = _Game::NO;
-
 GConfigs::GConfigs(GConfigs & other) : cMod(other.cMod), gMod(other.gMod),
 configDir(other.configDir), deckSize(other.deckSize), countStr(other.countStr) {}
 
@@ -19,18 +17,16 @@ GConfigs & GConfigs::operator=(const GConfigs & other) {
 	return *this;
 }
 
-Game::Game(GConfigs mode, std::vector<Strategy*> str) : strategies(str),
-		configs(mode), deck(mode.deckSize, mode.cMod), gui(nullptr) {
-	
+Game::Game(GConfigs mode, std::vector<std::unique_ptr<Strategy>> str) : strategies(std::move(str)),
+		configs(mode), deck(mode.deckSize, mode.cMod), gui(new Gui(this)) {
 	stackcard.resize(mode.countStr);
 	decisions.resize(mode.countStr);
 	low_card.resize(mode.countStr);
 }
 
-void Game::Play(Gui * g) {
+void Game::Play() {
 	startGame();
 	unsigned int i = 0u;
-	gui = g;
 	switch (configs.gMod) {
 	case (GameMode::DETAILED): case (GameMode::FAST) :
 		unsigned char c;
@@ -52,15 +48,10 @@ void Game::Play(Gui * g) {
 			stopGame();
 			return;
 		}
-		while (bool(_isGame)) {
+		while (_isGame == _Game::YES) {
 			Turn();
 			if (configs.gMod == GameMode::DETAILED){
 				c = std::getchar();
-				if (c == unsigned char(27)) {
-					stopGame();
-					std::cout << "Game was stopped by escape pressing." << std::endl;
-					return;
-				} // escape pressed
 			}
 		}
 		ResultsCalculating();
@@ -86,7 +77,7 @@ void Game::Turn() {
 	for (i = 0u; i < configs.countStr; i++) {
 		if (decisions[i] == Decision::NEXT) {
 			if (configs.gMod == GameMode::DETAILED)
-				std::cout << "Press any key to continue or Esc to exit" << std::endl;
+				std::cout << "Press any key to continue..." << std::endl;
 
 			return;
 		}
@@ -101,7 +92,7 @@ void Game::Tournament() {
 			"Game stoped." << std::endl;
 		return;
 	}
-	unsigned char i = 0u, j = 0u, tmp = 0u;
+	size_t tmp = 0u, i = 0u, j = 0u;
 	try {
 		for (i = 0u; i < configs.countStr; i++)
 			strategies[i]->init(configs.configDir);
@@ -117,7 +108,7 @@ void Game::Tournament() {
 	for (i = 0u; i < configs.countStr - 1u; i++) {
 		for (j = i + 1u; j < configs.countStr; j++) {
 			tmp = Pair(i, j);
-			matrix[i*configs.countStr + j] = matrix[j*configs.countStr + i] = tmp;
+			matrix[i*configs.countStr + j] = matrix[j*configs.countStr + i] = static_cast<unsigned char>(tmp);
 			results[tmp]++;
 		}
 	}
@@ -127,7 +118,7 @@ void Game::Tournament() {
 	stopGame();
 }
 
-unsigned char Game::Pair(unsigned char i, unsigned char j) {
+size_t Game::Pair(size_t i, size_t j) {
 	decisions[i] = decisions[j] = Decision::NEXT;
 	stackcard[i].push(deck.getCard());
 	stackcard[j].push(deck.getCard());
@@ -146,7 +137,7 @@ unsigned char Game::Pair(unsigned char i, unsigned char j) {
 		}
 	} 
 	
-	unsigned int ret = 0u;
+	size_t ret = 0u;
 	if (stackcard[i].score() <= 21u) {
 		if (stackcard[i].score() > stackcard[j].score() || stackcard[j].score() > 21u)
 			ret = i;
@@ -165,15 +156,15 @@ unsigned char Game::Pair(unsigned char i, unsigned char j) {
 }
 
 void Game::ResultsCalculating() {
-	unsigned int i, championNumber = 0u;
+	unsigned int i, championNumber = 0u, flag = 0u;
 	for (i = 0u; i < configs.countStr; i++) {
 		if (stackcard[i].score() <= 21u) {
-			if (stackcard[i].score() > stackcard[championNumber].score() || stackcard[championNumber].score() > 21u)
+			if (stackcard[i].score() > stackcard[championNumber].score() || stackcard[championNumber].score() > 21u) {
 				championNumber = i;
+				flag = 0;
+			}
 			else if (stackcard[i].score() == stackcard[championNumber].score() && championNumber != i) {
-				std::cout << "Drawn game! At least two strategies scored equal score!" << std::endl;
-				gui->Results();
-				return;
+				flag = 1;
 			}
 		}
 	}
@@ -182,25 +173,10 @@ void Game::ResultsCalculating() {
 		gui->Results();
 		return;
 	}
-	std::cout << "Strategy number " << championNumber + 1u << " won the game." << std::endl;
+	if (flag == 0)
+		std::cout << "Strategy number " << championNumber + 1u << " won the game." << std::endl;
+	else
+		std::cout << "Drawn game! At least two strategies scored equal score!" << std::endl;
+
 	gui->Results();
 }
-
-//void Game::PrintResuls() {
-//	std::cout << " " << configs.countStr << " strategies competed in the game." << std::endl;
-//	std::cout << "\tTable with results:" << std::endl;
-//	std::cout << "   Number:    | Num of moves:|     Score:   " << std::endl;
-//	unsigned int i = 0u;
-//	
-//	for (; i < configs.countStr; i++) {
-//		std::cout.width(13);
-//		std::cout.setf(std::ios::left);
-//		std::cout << "    " << i + 1 <<  "|";
-//		std::cout.width(13);
-//		std::cout.setf(std::ios::left);
-//		std::cout << "    " << static_cast<unsigned int>(stackcard[i].size()) << "|";
-//		std::cout.width(13);
-//		std::cout.setf(std::ios::left);
-//		std::cout << "    " << static_cast<unsigned int>(stackcard[i].score()) << std::endl;
-//	}
-//}

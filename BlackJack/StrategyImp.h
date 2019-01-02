@@ -11,6 +11,7 @@ public:
 	unsigned char number = 0u;
 	std::string path;
 	
+	virtual ~StrategyImp() {}
 	void getScore(const StackCard & stack) { score = stack.score(); }
 };
 #endif

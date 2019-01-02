@@ -19,7 +19,7 @@ class Deck {
 	const static unsigned char size = 36u;
 	static std::vector<Card> start_deck;
 
-	CardGivMode mode/* = CardGivMode::SIMPLE*/;
+	CardGivMode mode;
 	unsigned char N;
 	unsigned int topCard;
 	std::vector<Card> deck;
@@ -28,7 +28,6 @@ public:
 			{ deck.resize(size * N); shufle(); }
 	const Card & getCard();
 	void shufle();
-//	void PrintParam();
 
 	static void InitialDeck();
 };
@@ -39,8 +38,8 @@ class StackCard {
 public:
 	StackCard() : weight_stack(0u) {}
 	~StackCard() {}
-	const Card & top() { return stack_card.back(); }
-	const Card & low() { return stack_card.front(); }
+	const Card & top() const { return stack_card.back(); }
+	const Card & low() const { return stack_card.front(); }
 	void push(const Card & other) { stack_card.push_back(other) ; weight_stack += (unsigned int)other.weight; }
 	void pop() { weight_stack -= (unsigned int)stack_card.back().weight; stack_card.pop_back(); }
 	void clear() { stack_card.clear(); weight_stack = 0u; }

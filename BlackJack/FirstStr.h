@@ -11,4 +11,5 @@ public:
 	std::string getName() override;
 	std::string getID() override;
 	FirstStr() { score = 0u; }
+	~FirstStr() {}
 };

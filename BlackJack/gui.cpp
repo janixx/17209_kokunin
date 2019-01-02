@@ -1,5 +1,12 @@
 #include "gui.h"
+
+#include <string>
+
 #include "game.h"
+#include "blackjack.h"
+#include "strategy.h"
+
+
 
 void Gui::TurnResults(unsigned int i) const {
 	std::cout << " \t" << i + 1u << ": \n"
@@ -62,11 +69,11 @@ void Gui::TableResults(const std::vector<unsigned char>& table) const {
 	}
 }
 
-//void Gui::PairResults(unsigned char first, unsigned char second) const{
+//void Game::Gui::PairResults(unsigned char first, unsigned char second) const{
 //
 //}
 
-void Gui::TourneyResults(std::vector<unsigned char> results) const {
+void Gui::TourneyResults(const std::vector<unsigned char> & results) const {
 	std::cout << std::endl;
 	unsigned char i;
 	std::vector<unsigned char> winners;//вектор НОМЕРОВ стратегий с наибольшим счётом

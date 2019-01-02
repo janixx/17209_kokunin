@@ -11,24 +11,6 @@ const Card & Card::operator=(const Card & other) {
 	}
 	return *this;
 }
-//void Deck::PrintParam() {
-//	//std::ofstream out("file.txt");
-//	std::cout << (unsigned int)size << std::endl;
-//	std::cout << "\n";
-//	for (int i = 0; i < size; i++) {
-//		std::cout << "number: " << (unsigned int)start_deck[i].number << " weight: " <<
-//			(unsigned int)start_deck[i].weight <<
-//			" suit: " << (unsigned int)start_deck[i].suit << std::endl;
-//	}
-//	std::cout << "\n\n\n\n\n\n\n";
-//	std::cout << "Size of sorted deck is: " << (unsigned int)size * N << std::endl;
-//	std::cout << "\n";
-//	for (int i = 0; i < N * size; i++) {
-//		std::cout << "number: " << (unsigned int)deck[i].number << " weight: " <<
-//			(unsigned int)deck[i].weight <<
-//			" suit: " << (unsigned int)deck[i].suit << std::endl;
-//	}
-//}
 
 void Deck::shufle() {
 	topCard = N * size - 1u;

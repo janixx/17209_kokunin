@@ -12,17 +12,22 @@ public:
 	Strategy * createStrategyByID(const ID & id) {
 		auto it = creators.find(id);
 		if (creators.end() == it) {
-			//no creator found
 			return nullptr;
 		}
-		//вызвать креэйтор
 		Creator creator = it->second;
-		Strategy * s = creator();
+		auto s = creator();
 		return s;
 	}
 	bool regStrategy(const ID & id, const Creator & creator) {
-		creators[id] = creator;//грабли -- перерегистрация (register twice)
-		return true;
+		auto s = createStrategyByID(id);
+		if (s == nullptr) {
+			creators[id] = creator;
+			return true;
+		}
+		else {
+			delete s;
+			return false;
+		}
 	}
 
 	static Factory * getInstance() {

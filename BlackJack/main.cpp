@@ -52,14 +52,15 @@ int main(int argc, char *argv[]) {
 	
 	ParametrsProcessing(configs, ID, parametrs);
 	std::vector<std::unique_ptr<Strategy>> strategies(0);
+	Factory<std::string, Strategy * (*)()> * f = Factory<std::string, Strategy * (*)()>::getInstance();
+
 	for (int i = 0; i < ID.size(); ++i) {
-		Factory<std::string, Strategy * (*)()> * f = Factory<std::string, Strategy * (*)()>::getInstance();
-		std::unique_ptr<Strategy> s(f->createStrategyByID(ID[i]));
+		Strategy * s = f->createStrategyByID(ID[i]);
 		if (nullptr == s) {
 			std::cerr << "Unikown strategy ID " << ID[i] << std::endl;
 			continue;
 		}
-		strategies.push_back(std::move(s));
+		strategies.emplace_back(s);
 	}
 	configs.countStr = strategies.size();
 	if (configs.countStr < 2) {

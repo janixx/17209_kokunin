@@ -41,7 +41,7 @@ private:
 public:
 
 	Game(GConfigs, std::vector<std::unique_ptr<Strategy>>);
-	~Game() { gui.~unique_ptr(); }
+	~Game() {}
 	void Play();
 
 	void startGame() { _isGame = _Game::YES; }

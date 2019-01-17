@@ -15,36 +15,40 @@ void GameWidget::setInterval(int msec)
 GameWidget::GameWidget(QWidget * parent) :
     QWidget(parent),
     timer(new QTimer(this)),
-    size(std::make_pair(50,50)),
     myMasterColor("#000")
 {
     timer->setInterval(300);
-    //myMasterColor = "#000";
-    universe.resize((size.first + 2) * (size.second + 2));
-    nextGen.resize((size.first + 2) * (size.second + 2));
     connect(timer, SIGNAL(timeout()), this, SLOT(newGeneration()));
 }
 
-int GameWidget::cellColumn()
+void GameWidget::newGeneration()
 {
-    return size.first;
+    if (game.newGenerate() == true)
+        QMessageBox::information(this,
+                                 tr("Game lost sense"),
+                                 tr("The End. Now game finished because all the next generations will be the same."),
+                                 QMessageBox::Ok);
+    update();
 }
 
-int GameWidget::cellRow()
+int GameWidget::fieldHeight()
 {
-    return size.second;
+    return static_cast<int>(game.getSize().first);
 }
 
-void GameWidget::setCellColumn(int column)
+int GameWidget::fieldWidth()
 {
-    if (column > 5 && column < 100)
-        size.first = column;
+    return static_cast<int>(game.getSize().second);
 }
 
-void GameWidget::setCellRow(int row)
+void GameWidget::setFieldHeight(int height)
 {
-    if (row > 5 && row < 100)
-        size.second = row;
+    game.setWidth(static_cast<size_t>(height));
+}
+
+void GameWidget::setFieldWidth(int width)//fix it!
+{
+    game.setWidth(static_cast<size_t>(width));
 }
 
 void GameWidget::startGame()
@@ -59,17 +63,9 @@ void GameWidget::stopGame()
 
 void GameWidget::clear()
 {
-    universe.clear();
+    game.clear();
     gameEnds(true);
     update();
-}
-
-void GameWidget::resetUniverse() // а это надо?
-{
-    universe.clear();
-    nextGen.clear();
-    universe.resize(size.first * size.second);
-    nextGen.resize(size.first * size.second);
 }
 
 QColor GameWidget::masterColor()
@@ -82,45 +78,3 @@ void GameWidget::setMasterColor(const QColor &color)
     myMasterColor = color;
     update();
 }
-
-bool GameWidget::isAlive(int x, int y)
-{
-    int power = 0;
-    power += universe[(y + 1) * size.first +  x];
-    power += universe[(y - 1) * size.first +  x];
-    power += universe[y * size.first +  x + 1];
-    power += universe[y * size.first +  x - 1];
-    power += universe[(y - 1) * size.first +  x - 1];
-    power += universe[(y - 1) * size.first +  x + 1];
-    power += universe[(y + 1) * size.first +  x - 1];
-    power += universe[(y + 1) * size.first +  x + 1];
-    if (((universe[y * size.first +  x] == true) && (power == 2)) || (power == 3))
-           return true;
-    return false;
-}
-
-void GameWidget::newGeneration()
-{
-    int notChanged=0;
-    for(int x=1; x <= size.first; x++) {
-        for(int y=1; y <= size.second; y++) {
-            nextGen[y * size.first + x] = isAlive(x,y);
-            if(nextGen[y * size.first + x] == universe[y * size.first + x])
-                notChanged++;
-        }
-    }
-    if(notChanged == size.first * size.second) {
-        QMessageBox::information(this,
-                                 tr("Game lost sense"),
-                                 tr("The End. Now game finished because all the next generations will be the same."),
-                                 QMessageBox::Ok);
-        stopGame();
-        gameEnds(true);
-        return;
-    }
-
-    universe = nextGen;
-
-    update();
-}
-

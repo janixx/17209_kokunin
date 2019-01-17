@@ -3,15 +3,17 @@
 
 #include <QColor>
 #include <QTimer>
-#include <QWidget>
 #include <QVector>
 
+#include "gamewidget.h"
+#include "mainwindow.h"
 
-class ControlWidget {
+class ControlWidget : public QWidget
+{
     Q_OBJECT
 
 public:
-    ControlWidget(QWidget * parent = nullptr);
+    explicit ControlWidget(QWidget * parent = nullptr);
     virtual ~ControlWidget() {}
 
 public slots:
@@ -19,24 +21,28 @@ public slots:
     void stopGame(); // finish
     void clear(); // clear
 
-    //int cellNumber(); // number of the cells in one row
-    void setCellNumber(const int &s); // set number of the cells in one row
+    int cellRow();
+    void setCellRow(int y);
 
-    //int interval(); // interval between generations
-    void setInterval(int msec); // set interval between generations
+    int cellColumn();
+    void setCellColumn(int x);
 
-    QColor masterColor(); // color of the cells
-    void setMasterColor(const QColor &color); // set color of the cells
+    int interval();
+    void setInterval(int msec);
 
-    QString dump(); // dump of current universe
-    void setDump(const QString &data); // set current universe from it's dump
+    QColor masterColor();
+    void setMasterColor(const QColor &color);
+
+signals:
+    void countRowChanged(bool ok);
+    void countColumnChanged(bool ok);
+    void intervalChanged(bool ok);
+    void resetGame(bool ok);
 
 private:
     QColor myMasterColor;
+    std::unique_ptr<GameWidget> game;
     std::pair<int, int> fieldSize;
-    QTimer timer;
-    QVector<bool> map;
-    QVector<bool> generation;
 };
 
 

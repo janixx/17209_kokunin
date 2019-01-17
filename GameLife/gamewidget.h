@@ -4,12 +4,11 @@
 #include <QTimer>
 #include <QWidget>
 
+#include "game.h"
+
 class GameWidget : public QWidget
 {
     Q_OBJECT
-private:
-    bool isAlive(int x, int y); // return true if universe[x][y] accept rules
-    void resetUniverse();// reset the size of universe
 
 public:
     explicit GameWidget(QWidget *parent = nullptr);
@@ -26,16 +25,16 @@ public slots:
     void stopGame(); // finish
     void clear(); // clear
 
-    int cellColumn();
-    int cellRow();  // number of the cells in one row
-    void setCellColumn(int c);
-    void setCellRow(int s); // set number of the cells in one row
+    int fieldHeight();
+    int fieldWidth();
+    void setFieldHeight(int height);
+    void setFieldWidth(int width);
 
-    int interval(); // interval between generations
+    int interval();
     void setInterval(int msec); // set interval between generations
 
-    QColor masterColor(); // color of the cells
-    void setMasterColor(const QColor &color); // set color of the cells
+    QColor masterColor();
+    void setMasterColor(const QColor &color);
 
 protected slots:
 
@@ -45,10 +44,8 @@ protected slots:
 
 private:
     QTimer * timer;
-    QVector<bool> universe;
-    QVector<bool> nextGen;
-    std::pair<int,int> size;
     QColor myMasterColor;
+    Game game;
 };
 
 #endif // GAMEWIDGET_H

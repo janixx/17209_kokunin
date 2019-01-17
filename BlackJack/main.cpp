@@ -55,12 +55,12 @@ int main(int argc, char *argv[]) {
 	Factory<std::string, Strategy * (*)()> * f = Factory<std::string, Strategy * (*)()>::getInstance();
 
 	for (int i = 0; i < ID.size(); ++i) {
-		Strategy * s = f->createStrategyByID(ID[i]);
+                std::unique_ptr<Strategy> s(f->createStrategyByID(ID[i]));
 		if (nullptr == s) {
 			std::cerr << "Unikown strategy ID " << ID[i] << std::endl;
 			continue;
 		}
-		strategies.emplace_back(s);
+                strategies.push_back(std::move(s));
 	}
 	configs.countStr = strategies.size();
 	if (configs.countStr < 2) {

@@ -21,19 +21,19 @@ MainWindow::MainWindow(QWidget * parent) :
     ui->HorizCountSlider->setValue(50);
     ui->VerticalCountSlider->setValue(36);
 
-    connect(ui->StartButton, SIGNAL(on_StartButton_clicked()), gui.get(), SLOT(startGame()));
-    connect(ui->StopButton, SIGNAL(on_StopButton_clicked()), gui.get(),SLOT(stopGame()));
-    connect(ui->ClearButton, SIGNAL(on_ClearButton_clicked()), gui.get(),SLOT(clear()));
+    connect(ui->StartButton, SIGNAL(clicked()), gui.get(), SLOT(startGame()));
+    connect(ui->StopButton, SIGNAL(clicked()), gui.get(),SLOT(stopGame()));
+    connect(ui->ClearButton, SIGNAL(clicked()), gui.get(),SLOT(clear()));
 
-    connect(ui->TimeSlider, SIGNAL(on_TimeSlider_valueChanged(int)), gui.get(), SLOT(setInterval(int)));
-    connect(ui->HorizCountSlider, SIGNAL(on_HorizCountSlider_valueChanged(int)), gui.get(), SLOT(setCellRow(int)));
-    connect(ui->VerticalCountSlider, SIGNAL(on_VerticalCountSlider_valueChanged(int)), gui.get(), SLOT(setCellColumn(int)));
+    connect(ui->TimeSlider, SIGNAL(valueChanged(int)), gui.get(), SLOT(setInterval(int)));
+    connect(ui->HorizCountSlider, SIGNAL(valueChanged(int)), gui.get(), SLOT(setFieldWidth(int)));
+    connect(ui->VerticalCountSlider, SIGNAL(valueChanged(int)), gui.get(), SLOT(setFieldHeight(int)));
 
     connect(gui.get(),SIGNAL(environmentChanged(bool)),ui->HorizCountSlider,SLOT(setDisabled(bool)));
     connect(gui.get(),SIGNAL(gameEnds(bool)),ui->HorizCountSlider,SLOT(setEnabled(bool)));
     connect(gui.get(),SIGNAL(environmentChanged(bool)),ui->VerticalCountSlider,SLOT(setDisabled(bool)));
     connect(gui.get(),SIGNAL(gameEnds(bool)),ui->VerticalCountSlider,SLOT(setEnabled(bool)));
-    connect(ui->ColourButton, SIGNAL(clicked()), gui.get(), SLOT(selectMasterColor()));
+    connect(ui->ColourButton, SIGNAL(clicked()), this, SLOT(selectMasterColor()));
 
     ui->Control->activate();
 }
@@ -44,37 +44,14 @@ MainWindow::~MainWindow()
 
 }
 
-void MainWindow::on_StartButton_clicked()
+void MainWindow::selectMasterColor()
 {
-
-}
-
-void MainWindow::on_HorizCountSlider_valueChanged(int value)
-{
-
-}
-
-void MainWindow::on_TimeSlider_valueChanged(int value)
-{
-
-}
-
-void MainWindow::on_VerticalCountSlider_valueChanged(int value)
-{
-
-}
-
-void MainWindow::on_StopButton_clicked()
-{
-
-}
-
-void MainWindow::on_ClearButton_clicked()
-{
-
-}
-
-void MainWindow::setColorButton(QIcon icon)
-{
-    ui->ColourButton->setIcon(QIcon(icon));
+    QColor color = QColorDialog::getColor(currentColor, this, tr("Select color of figures"));
+    if(!color.isValid())
+        return;
+    currentColor = color;
+    gui->setMasterColor(color);
+    QPixmap icon(16, 16);
+    icon.fill(color);
+    ui->ColourButton->setIcon( QIcon(icon) );
 }

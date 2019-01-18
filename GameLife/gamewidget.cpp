@@ -149,15 +149,3 @@ void GameWidget::mouseMoveEvent(QMouseEvent * e)
         update();
     }
 }
-
-void GameWidget::selectMasterColor()
-{
-    QColor color = QColorDialog::getColor(currentColor, this, tr("Select color of figures"));
-    if(!color.isValid())
-        return;
-    currentColor = color;
-    setMasterColor(color);
-    QPixmap icon(16, 16);
-    icon.fill(color);
-    ui->setColorButton( QIcon(icon) );
-}

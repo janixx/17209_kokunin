@@ -18,21 +18,8 @@ public:
     explicit MainWindow(QWidget * parent = nullptr);
     ~MainWindow();
 
-    void setColorButton(QIcon icon);
-
-private slots:
+public slots:
     void selectMasterColor();
-    void on_StartButton_clicked();
-
-    void on_HorizCountSlider_valueChanged(int value);
-
-    void on_TimeSlider_valueChanged(int value);
-
-    void on_VerticalCountSlider_valueChanged(int value);
-
-    void on_StopButton_clicked();
-
-    void on_ClearButton_clicked();
 
 private:
     Ui::MainWindow * ui;

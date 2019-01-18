@@ -42,7 +42,6 @@ public slots:
     void setMasterColor(const QColor &color);
 
 protected slots:
-    void selectMasterColor();
     void paintGrid(QPainter & p);
     void paintUniverse(QPainter & p);
     void newGeneration();
@@ -52,7 +51,6 @@ private:
     QColor myMasterColor;
     QColor currentColor;
     Game game;
-    Ui::MainWindow * ui;
 };
 
 #endif // GAMEWIDGET_H

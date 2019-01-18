@@ -76,6 +76,16 @@ void Game::setCellAlive(size_t x, size_t y)
     universe[y * size.first +  x] = true;
 }
 
+void Game::setCellDead(size_t x, size_t y)
+{
+    universe[y * size.first + x] = true;
+}
+
+void Game::setCellReverse(size_t x, size_t y)
+{
+    universe[y * size.first + x] = !universe[y * size.first + x];
+}
+
 void Game::setRange(std::pair<int, int> newRange)//FIX - ADD CHECK
 {
     range = newRange;

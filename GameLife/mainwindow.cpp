@@ -29,10 +29,11 @@ MainWindow::MainWindow(QWidget * parent) :
     connect(ui->HorizCountSlider, SIGNAL(on_HorizCountSlider_valueChanged(int)), gui.get(), SLOT(setCellRow(int)));
     connect(ui->VerticalCountSlider, SIGNAL(on_VerticalCountSlider_valueChanged(int)), gui.get(), SLOT(setCellColumn(int)));
 
-
-    connect(gui,SIGNAL(environmentChanged(bool)),ui->cellsControl,SLOT(setDisabled(bool)));
-    connect(gui,SIGNAL(gameEnds(bool)),ui->cellsControl,SLOT(setEnabled(bool)));
-    connect(ui->colorButton, SIGNAL(clicked()), this, SLOT(selectMasterColor()));
+    connect(gui.get(),SIGNAL(environmentChanged(bool)),ui->HorizCountSlider,SLOT(setDisabled(bool)));
+    connect(gui.get(),SIGNAL(gameEnds(bool)),ui->HorizCountSlider,SLOT(setEnabled(bool)));
+    connect(gui.get(),SIGNAL(environmentChanged(bool)),ui->VerticalCountSlider,SLOT(setDisabled(bool)));
+    connect(gui.get(),SIGNAL(gameEnds(bool)),ui->VerticalCountSlider,SLOT(setEnabled(bool)));
+    connect(ui->ColourButton, SIGNAL(clicked()), gui.get(), SLOT(selectMasterColor()));
 
     ui->Control->activate();
 }
@@ -71,4 +72,9 @@ void MainWindow::on_StopButton_clicked()
 void MainWindow::on_ClearButton_clicked()
 {
 
+}
+
+void MainWindow::setColorButton(QIcon icon)
+{
+    ui->ColourButton->setIcon(QIcon(icon));
 }

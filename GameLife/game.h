@@ -20,6 +20,8 @@ public:
     void setWidth(size_t width);
     void setRange(std::pair<int, int> newRange);
     void setCellAlive(size_t x, size_t y);
+    void setCellDead(size_t x, size_t y);
+    void setCellReverse(size_t x, size_t y);
 
     const std::vector<bool> & getUniverse() const;
     const std::pair<int, int> & getRange() const;

@@ -12,7 +12,12 @@ class GameWidget : public QWidget
 
 public:
     explicit GameWidget(QWidget *parent = nullptr);
-    ~GameWidget();
+    ~GameWidget() {}
+
+protected:
+    void paintEvent(QPaintEvent *);
+    void mousePressEvent(QMouseEvent * e);
+    void mouseMoveEvent(QMouseEvent * e);
 
 signals:
     //when one of the cell has been changed,emit this signal to lock the universeSize
@@ -37,7 +42,7 @@ public slots:
     void setMasterColor(const QColor &color);
 
 protected slots:
-
+    void selectMasterColor();
     void paintGrid(QPainter & p);
     void paintUniverse(QPainter & p);
     void newGeneration();
@@ -45,7 +50,9 @@ protected slots:
 private:
     QTimer * timer;
     QColor myMasterColor;
+    QColor currentColor;
     Game game;
+    Ui::MainWindow * ui;
 };
 
 #endif // GAMEWIDGET_H

@@ -1,41 +1,47 @@
 #include <QColorDialog>
 
-#include "gamewidget.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget * parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    currentColor(QColor("#000")),
-    gui(new GameWidget(this))
+    currentColor(QColor("#000"))
 {
     ui->setupUi(this);
 
     QPixmap icon(16, 16);
     icon.fill(currentColor);
+    ui->colorButton->setIcon( QIcon(icon) );
 
-    ui->ColourButton->setIcon(QIcon(icon));
-    ui->HorizCountSlider->setRange(50, 1000);
-    ui->VerticalCountSlider->setRange(36, 750);
-    ui->HorizCountSlider->setValue(50);
-    ui->VerticalCountSlider->setValue(36);
+    ui->colorButton->setIcon(QIcon(icon));
+    ui->widthSlider->setRange(20, 100);
+    ui->heightSlider->setRange(20, 100);
+    ui->widthSlider->setValue(20);
+    ui->heightSlider->setValue(20);
+    ui->squareButton->click();
 
-    connect(ui->StartButton, SIGNAL(clicked()), gui.get(), SLOT(startGame()));
-    connect(ui->StopButton, SIGNAL(clicked()), gui.get(),SLOT(stopGame()));
-    connect(ui->ClearButton, SIGNAL(clicked()), gui.get(),SLOT(clear()));
+    connect(ui->StartButton, SIGNAL(clicked()), ui->game, SLOT(startGame()));
+    connect(ui->StopButton, SIGNAL(clicked()), ui->game,SLOT(stopGame()));
+    connect(ui->ClearButton, SIGNAL(clicked()), ui->game,SLOT(clear()));
 
-    connect(ui->TimeSlider, SIGNAL(valueChanged(int)), gui.get(), SLOT(setInterval(int)));
-    connect(ui->HorizCountSlider, SIGNAL(valueChanged(int)), gui.get(), SLOT(setFieldWidth(int)));
-    connect(ui->VerticalCountSlider, SIGNAL(valueChanged(int)), gui.get(), SLOT(setFieldHeight(int)));
+    connect(ui->intervalSlider, SIGNAL(valueChanged(int)), ui->game, SLOT(setInterval(int)));
+    connect(ui->widthSlider, SIGNAL(valueChanged(int)), ui->game, SLOT(setFieldWidth(int)));
+    connect(ui->heightSlider, SIGNAL(valueChanged(int)), ui->game, SLOT(setFieldHeight(int)));
 
-    connect(gui.get(),SIGNAL(environmentChanged(bool)),ui->HorizCountSlider,SLOT(setDisabled(bool)));
-    connect(gui.get(),SIGNAL(gameEnds(bool)),ui->HorizCountSlider,SLOT(setEnabled(bool)));
-    connect(gui.get(),SIGNAL(environmentChanged(bool)),ui->VerticalCountSlider,SLOT(setDisabled(bool)));
-    connect(gui.get(),SIGNAL(gameEnds(bool)),ui->VerticalCountSlider,SLOT(setEnabled(bool)));
-    connect(ui->ColourButton, SIGNAL(clicked()), this, SLOT(selectMasterColor()));
+    connect(ui->game, SIGNAL(environmentChanged(bool)),ui->applyButton,SLOT(setHidden(bool)));
+    connect(ui->game,SIGNAL(gameEnds(bool)),ui->applyButton,SLOT(setVisible(bool)));
+    //connect(ui->game,SIGNAL(environmentChanged(bool)),ui->widthSlider,SLOT(setDisabled(bool)));
+    //connect(ui->game,SIGNAL(gameEnds(bool)),ui->widthSlider,SLOT(setEnabled(bool)));
+    //connect(ui->game,SIGNAL(environmentChanged(bool)),ui->heightSlider,SLOT(setDisabled(bool)));
+    //connect(ui->game,SIGNAL(gameEnds(bool)),ui->heightSlider,SLOT(setEnabled(bool)));
+    connect(ui->colorButton, SIGNAL(clicked()), this, SLOT(selectMasterColor()));
 
-    ui->Control->activate();
+    //ui->Control->activate();
+    //ui->mainLayout->setStretchFactor(ui->fieldLayout, 8);
+    ui->mainLayout->setStretchFactor(ui->setLayout, 2);
+    //ui->fieldLayout->addWidget(ui->game);
+    //ui->game->show();
 }
 
 MainWindow::~MainWindow()
@@ -50,8 +56,8 @@ void MainWindow::selectMasterColor()
     if(!color.isValid())
         return;
     currentColor = color;
-    gui->setMasterColor(color);
+    ui->game->setMasterColor(color);
     QPixmap icon(16, 16);
     icon.fill(color);
-    ui->ColourButton->setIcon( QIcon(icon) );
+    ui->colorButton->setIcon( QIcon(icon) );
 }

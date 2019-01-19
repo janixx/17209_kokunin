@@ -12,14 +12,13 @@ int GameWidget::interval()
 
 void GameWidget::setInterval(int msec)
 {
-    timer->setInterval(msec);
+    _interval = msec;
 }
 
 GameWidget::GameWidget(QWidget * parent) :
     QWidget(parent),
     timer(new QTimer(this)),
-    myMasterColor("#000"),
-    game()
+    myMasterColor("#000")
 {
     timer->setInterval(300);
     connect(timer, SIGNAL(timeout()), this, SLOT(newGeneration()));
@@ -27,11 +26,15 @@ GameWidget::GameWidget(QWidget * parent) :
 
 void GameWidget::newGeneration()
 {
-    if (game.newGenerate() == false)
+    if (game.newGenerate() == false) {
         QMessageBox::information(this,
                                  tr("Game lost sense"),
                                  tr("The End. Now game finished because all the next generations will be the same."),
                                  QMessageBox::Ok);
+        stopGame();
+        emit gameEnds(true);
+    }
+
     update();
 }
 
@@ -47,28 +50,35 @@ int GameWidget::fieldWidth()
 
 void GameWidget::setFieldHeight(int height)
 {
-    game.setWidth(static_cast<size_t>(height));
+    _height = static_cast<size_t>(height);
 }
 
 void GameWidget::setFieldWidth(int width)//fix it!
 {
-    game.setWidth(static_cast<size_t>(width));
+    _width = static_cast<size_t>(width);
+}
+
+void GameWidget::setParametrs()
+{
+
 }
 
 void GameWidget::startGame()
 {
     timer->start();
+    environmentChanged(true);
 }
 
 void GameWidget::stopGame()
 {
     timer->stop();
+    emit gameEnds(true);
 }
 
 void GameWidget::clear()
 {
-    game.clear();
-    gameEnds(true);
+    game.reset();
+    emit gameEnds(true);
     update();
 }
 
@@ -85,7 +95,7 @@ void GameWidget::setMasterColor(const QColor &color)
 
 void GameWidget::paintGrid(QPainter & p)
 {
-    QColor gridColor = ("#FFF");
+    QColor gridColor = ("#000");
     QRect borders(0, 0, width()-1, height()-1); // borders of the universe
     //QColor gridColor = myMasterColor; // color of the grid
     gridColor.setAlpha(10); // must be lighter than main color
@@ -102,7 +112,7 @@ void GameWidget::paintGrid(QPainter & p)
     p.drawRect(borders);
 }
 
-void GameWidget::paintUniverse(QPainter &p)
+void GameWidget::paintUniverse(QPainter & p)
 {
     size_t x = 0u, y = 0u;
     double cellWidth = static_cast<double>(width()) / game.getSize().first;
@@ -134,6 +144,7 @@ void GameWidget::mousePressEvent(QMouseEvent *e)
     double cellHeight = static_cast<double>(height()) / game.getSize().second;
     size_t y = static_cast<size_t>(e->y() / cellHeight) + 1;
     size_t x = static_cast<size_t>(e->x() / cellWidth) + 1;
+
     game.setCellReverse(x, y);
     update();
 }
@@ -144,8 +155,8 @@ void GameWidget::mouseMoveEvent(QMouseEvent * e)
     double cellHeight = static_cast<double>(height()) / game.getSize().second;
     size_t y = static_cast<size_t>(e->y() / cellHeight) + 1;
     size_t x = static_cast<size_t>(e->x() / cellWidth) + 1;
-    if(!game.isAlive(x, y)){                //if current cell is empty,fill in it
-        game.setCellAlive(x, y);
+    if(!game.willAlive(x, y)){                //if current cell is empty,fill in it
+        game.setCellDead(x, y);
         update();
     }
 }

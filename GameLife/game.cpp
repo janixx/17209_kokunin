@@ -19,7 +19,7 @@ bool Game::newGenerate()
     generation.resize((size.first + 2) * (size.second + 2));
     for(size_t x=1; x <= size.first; x++) {
         for(size_t y=1; y <= size.second; y++) {
-            generation[y * size.first + x] = isAlive(x,y);
+            generation[y * size.first + x] = willAlive(x,y);
             if(generation[y * size.first + x] == universe[y * size.first + x])
                 notChanged++;
         }
@@ -31,7 +31,12 @@ bool Game::newGenerate()
     return true;
 }
 
-bool Game::isAlive(size_t x, size_t y)
+inline bool Game::isAlive(size_t x, size_t y)
+{
+    return universe[y * size.first +  x];
+}
+
+bool Game::willAlive(size_t x, size_t y)
 {
     int power = 0;
     power += universe[(y + 1) * size.first +  x];
@@ -42,23 +47,27 @@ bool Game::isAlive(size_t x, size_t y)
     power += universe[(y - 1) * size.first +  x + 1];
     power += universe[(y + 1) * size.first +  x - 1];
     power += universe[(y + 1) * size.first +  x + 1];
-    if (universe[y * size.first +  x] == true && power >= range.first && power <= range.second)
+    if (!isAlive(x,y) && power == range.second)
            return true;
+    if (isAlive(x,y) && power >= range.first && power <= range.second)
+           return true;
+
     return false;
 }
 
-void Game::clear()
+void Game::reset()
 {
     universe.clear();
     generation.clear();
     universe.resize((size.first + 2) * (size.second + 2));
+    generation.resize((size.first + 2) * (size.second + 2));
 }
 
 void Game::resize(std::pair<size_t, size_t> newSize)//FIX ME
 {
     //FIX!!!!!!!!
     size = newSize;
-    clear();
+    reset();
 }
 
 void Game::setHeight(size_t height)//FIX - ADD CHECK

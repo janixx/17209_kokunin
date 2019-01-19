@@ -7,7 +7,7 @@
 class GameWidget;
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -24,7 +24,6 @@ public slots:
 private:
     Ui::MainWindow * ui;
     QColor currentColor;
-    std::unique_ptr<GameWidget> gui;
 };
 
 #endif // MAINWINDOW_H

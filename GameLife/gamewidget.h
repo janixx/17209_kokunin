@@ -20,10 +20,12 @@ protected:
     void mouseMoveEvent(QMouseEvent * e);
 
 signals:
-    //when one of the cell has been changed,emit this signal to lock the universeSize
+    //when one of the cell has been changed,emit this signal to lock the applyButton
     void environmentChanged(bool ok);
     //when game is over or clear is called,emit it to unlock the universeSize
     void gameEnds(bool ok);
+    //when one of the config has been changed, emit this signal
+    void configsChanged(bool ok);
 
 public slots:
     void startGame(); // start
@@ -34,6 +36,7 @@ public slots:
     int fieldWidth();
     void setFieldHeight(int height);
     void setFieldWidth(int width);
+    void setParametrs();
 
     int interval();
     void setInterval(int msec); // set interval between generations
@@ -51,6 +54,9 @@ private:
     QColor myMasterColor;
     QColor currentColor;
     Game game;
+    size_t _width;
+    size_t _height;
+    int _interval;
 };
 
 #endif // GAMEWIDGET_H

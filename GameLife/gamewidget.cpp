@@ -12,15 +12,20 @@ int GameWidget::interval()
 
 void GameWidget::setInterval(int msec)
 {
+    _changed = true;
     _interval = msec;
 }
 
 GameWidget::GameWidget(QWidget * parent) :
     QWidget(parent),
     timer(new QTimer(this)),
-    myMasterColor("#000")
+    myMasterColor("#000"),
+    _width(game.getMinSize().first),
+    _height(game.getMinSize().second),
+    _interval(50),
+    _changed(false)
 {
-    timer->setInterval(300);
+    timer->setInterval(_interval);
     connect(timer, SIGNAL(timeout()), this, SLOT(newGeneration()));
 }
 
@@ -50,23 +55,33 @@ int GameWidget::fieldWidth()
 
 void GameWidget::setFieldHeight(int height)
 {
+    _changed = true;
     _height = static_cast<size_t>(height);
 }
 
-void GameWidget::setFieldWidth(int width)//fix it!
+void GameWidget::setFieldWidth(int width)
 {
+    _changed = true;
     _width = static_cast<size_t>(width);
 }
 
 void GameWidget::setParametrs()
 {
-
+    if(_changed)
+    {
+        if(game.getMaxSize().first <= _width && game.getMinSize().first >= _width)
+            game.setWidth(_width);
+        if(game.getMaxSize().second <= _height && game.getMinSize().second >= _height)
+            game.setHeight(_height);
+        timer->setInterval(_interval);
+        _changed = false;
+    }
 }
 
 void GameWidget::startGame()
 {
     timer->start();
-    environmentChanged(true);
+    gameStart(true);
 }
 
 void GameWidget::stopGame()
@@ -159,4 +174,24 @@ void GameWidget::mouseMoveEvent(QMouseEvent * e)
         game.setCellDead(x, y);
         update();
     }
+}
+
+int GameWidget::maxHeight()
+{
+    return static_cast<int>(game.getMaxSize().second);
+}
+
+int GameWidget::minHeight()
+{
+    return static_cast<int>(game.getMinSize().second);
+}
+
+int GameWidget::maxWidth()
+{
+    return static_cast<int>(game.getMaxSize().first);
+}
+
+int GameWidget::minWidth()
+{
+    return static_cast<int>(game.getMinSize().first);
 }

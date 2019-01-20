@@ -124,3 +124,12 @@ void Game::setMaxSize(std::pair<size_t, size_t> newMax) //FIX - ADD CHECK
 {
     Game::maxSize = newMax;
 }
+
+const std::pair<size_t, size_t> & Game::getMaxSize() const
+{
+    return Game::maxSize;
+}
+const std::pair<size_t, size_t> & Game::getMinSize() const
+{
+    return Game::minSize;
+}

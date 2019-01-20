@@ -28,6 +28,8 @@ public:
     const std::vector<bool> & getUniverse() const;
     const std::pair<int, int> & getRange() const;
     const std::pair<size_t, size_t> & getSize() const;
+    const std::pair<size_t, size_t> & getMaxSize() const;
+    const std::pair<size_t, size_t> & getMinSize() const;
 
     static void setMinSize(std::pair<size_t, size_t> newMin);
     static void setMaxSize(std::pair<size_t, size_t> newMax);

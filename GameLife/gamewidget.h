@@ -14,6 +14,11 @@ public:
     explicit GameWidget(QWidget *parent = nullptr);
     ~GameWidget() {}
 
+    int maxWidth();
+    int maxHeight();
+    int minWidth();
+    int minHeight();
+
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent * e);
@@ -25,7 +30,7 @@ signals:
     //when game is over or clear is called,emit it to unlock the universeSize
     void gameEnds(bool ok);
     //when one of the config has been changed, emit this signal
-    void configsChanged(bool ok);
+    void gameStart(bool ok);
 
 public slots:
     void startGame(); // start
@@ -37,6 +42,7 @@ public slots:
     void setFieldHeight(int height);
     void setFieldWidth(int width);
     void setParametrs();
+    //void slotParamChanged();
 
     int interval();
     void setInterval(int msec); // set interval between generations
@@ -57,6 +63,7 @@ private:
     size_t _width;
     size_t _height;
     int _interval;
+    bool _changed;
 };
 
 #endif // GAMEWIDGET_H

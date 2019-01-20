@@ -3,31 +3,26 @@
 
 #include <map>
 #include <string>
-#include "strategy.h"
 
-template<class ID , class Creator = Strategy * (*)()>
+template<class ID , class Creator>
 class Factory {
 	std::map < ID, Creator > creators;
 public:
-	Strategy * createStrategyByID(const ID & id) {
+	Creator createStrategyByID(const ID & id) {
 		auto it = creators.find(id);
 		if (creators.end() == it) {
 			return nullptr;
 		}
-		Creator creator = it->second;
-		auto s = creator();
-		return s;
+		return it->second;
 	}
+
 	bool regStrategy(const ID & id, const Creator & creator) {
-		auto s = createStrategyByID(id);
+		Creator s = createStrategyByID(id);
 		if (s == nullptr) {
 			creators[id] = creator;
 			return true;
 		}
-		else {
-			delete s;
-			return false;
-		}
+		return false;
 	}
 
 	static Factory * getInstance() {

@@ -20,6 +20,8 @@ public:
 
 public slots:
     void selectMasterColor();
+    void loadGame();
+    void saveGame();
 
 private:
     Ui::MainWindow * ui;

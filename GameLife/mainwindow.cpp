@@ -1,4 +1,8 @@
 #include <QColorDialog>
+#include <QFile>
+#include <QFileDialog>
+#include <QString>
+#include <QTextStream>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -35,17 +39,17 @@ MainWindow::MainWindow(QWidget * parent) :
 
     connect(ui->game, SIGNAL(gameStart(bool)),ui->applyButton,SLOT(setDisabled(bool)));
     connect(ui->game,SIGNAL(gameEnds(bool)),ui->applyButton,SLOT(setEnabled(bool)));
-    //connect(ui->game,SIGNAL(environmentChanged(bool)),ui->widthSlider,SLOT(setDisabled(bool)));
-    //connect(ui->game,SIGNAL(gameEnds(bool)),ui->widthSlider,SLOT(setEnabled(bool)));
-    //connect(ui->game,SIGNAL(environmentChanged(bool)),ui->heightSlider,SLOT(setDisabled(bool)));
-    //connect(ui->game,SIGNAL(gameEnds(bool)),ui->heightSlider,SLOT(setEnabled(bool)));
+
+    connect(ui->customButton,SIGNAL(toggled(bool)), ui->game, SLOT(setCustomField(bool)));
+    connect(ui->squareButton,SIGNAL(toggled(bool)), ui->game, SLOT(setSquareField(bool)));
+    connect(ui->game, SIGNAL(heightChanged(int)), ui->heightSlider, SLOT(setValue(int)));
+
     connect(ui->colorButton, SIGNAL(clicked()), this, SLOT(selectMasterColor()));
 
-    //ui->Control->activate();
-    //ui->mainLayout->setStretchFactor(ui->fieldLayout, 8);
+    connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveGame()));
+    connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(loadGame()));
+
     ui->mainLayout->setStretchFactor(ui->setLayout, 2);
-    //ui->fieldLayout->addWidget(ui->game);
-    //ui->game->show();
 }
 
 MainWindow::~MainWindow()
@@ -64,4 +68,89 @@ void MainWindow::selectMasterColor()
     QPixmap icon(16, 16);
     icon.fill(color);
     ui->colorButton->setIcon( QIcon(icon) );
+}
+
+void MainWindow::saveGame()
+{
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save current game"),
+                                            QDir::homePath(), tr("Conway's Game *.life Files (*.life)"));
+    if(filename.length() < 1)
+        return;
+
+    QFile file(filename);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return;
+
+    QString buf = QString::number(ui->game->fieldWidth())+"\n";
+    file.write(buf.toUtf8());
+    buf.clear();
+
+    buf.number(ui->game->fieldHeight())+"\n";
+    file.write(buf.toUtf8());
+
+    buf.clear();
+    buf.number(ui->game->square())+"\n";
+    file.write(ui->game->dump().toUtf8());
+
+    buf.clear();
+    QColor color = ui->game->masterColor();
+    buf = QString::number(color.red())+" "+
+                  QString::number(color.green())+" "+
+                  QString::number(color.blue())+"\n";
+    file.write(buf.toUtf8());
+    buf.clear();
+
+    buf = QString::number(ui->intervalSlider->value())+"\n";
+    file.write(buf.toUtf8());
+
+    file.close();
+}
+
+void MainWindow::loadGame()
+{
+    QString filename =
+                    QFileDialog::getOpenFileName(this,
+                                tr("Open saved game"),
+                                    QDir::homePath(),
+                                tr("Conway's Game Of Life File (*.life)"));
+    if(filename.length() < 1)
+        return;
+    QFile file(filename);
+    if(!file.open(QIODevice::ReadOnly))
+        return;
+    QTextStream in(&file);
+
+    int wv;
+    in >> wv;
+    ui->game->setFieldWidth(wv);
+
+    int hv;
+    in >> hv;
+    ui->game->setFieldHeight(hv);
+
+    int qv;
+    in >> qv;
+    if(qv == 1)
+        ui->squareButton->click();
+    else
+        ui->customButton->click();
+
+    QString dump="";
+    for(int k=0; k != hv ; k++) {
+        QString t;
+        in >> t;
+        dump.append(t+"\n");
+    }
+    ui->game->setDump(dump);
+
+    int r,g,b; // RGB color
+    in >> r >> g >> b;
+    currentColor = QColor(r,g,b);
+    ui->game->setMasterColor(currentColor); // sets color of the dots
+    QPixmap icon(16, 16); // icon on the button
+    icon.fill(currentColor); // fill with new color
+    ui->colorButton->setIcon( QIcon(icon) ); // set icon for button
+    in >> r; // r will be interval number
+    ui->intervalSlider->setValue(r);
+    ui->game->setInterval(r);
 }

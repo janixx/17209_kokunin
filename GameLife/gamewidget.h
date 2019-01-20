@@ -31,6 +31,7 @@ signals:
     void gameEnds(bool ok);
     //when one of the config has been changed, emit this signal
     void gameStart(bool ok);
+    void heightChanged(int x);
 
 public slots:
     void startGame(); // start
@@ -42,13 +43,19 @@ public slots:
     void setFieldHeight(int height);
     void setFieldWidth(int width);
     void setParametrs();
-    //void slotParamChanged();
+
+    void setSquareField(bool ok);
+    void setCustomField(bool ok);
+    int square();
 
     int interval();
     void setInterval(int msec); // set interval between generations
 
     QColor masterColor();
     void setMasterColor(const QColor &color);
+
+    QString dump();
+    void setDump(const QString &data);
 
 protected slots:
     void paintGrid(QPainter & p);
@@ -64,6 +71,7 @@ private:
     size_t _height;
     int _interval;
     bool _changed;
+    bool _square;
 };
 
 #endif // GAMEWIDGET_H

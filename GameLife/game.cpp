@@ -1,7 +1,7 @@
 #include "game.h"
 
-std::pair<size_t, size_t> Game::maxSize = std::make_pair(2000,1500);
-std::pair<size_t, size_t> Game::minSize = std::make_pair(80,60);
+std::pair<size_t, size_t> Game::maxSize = std::make_pair(2000,2000);
+std::pair<size_t, size_t> Game::minSize = std::make_pair(10,10);
 std::pair<int, int> Game::maxRange = std::make_pair(1,9);
 
 Game::Game(std::pair<size_t, size_t> sz, std::pair<int, int> rg) : //ADD CHECK PARAMETRS

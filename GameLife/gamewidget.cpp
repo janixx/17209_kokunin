@@ -12,7 +12,6 @@ int GameWidget::interval()
 
 void GameWidget::setInterval(int msec)
 {
-    _changed = true;
     _interval = msec;
 }
 
@@ -23,7 +22,8 @@ GameWidget::GameWidget(QWidget * parent) :
     _width(game.getMinSize().first),
     _height(game.getMinSize().second),
     _interval(50),
-    _changed(false)
+    _changed(false),
+    _square(true)
 {
     timer->setInterval(_interval);
     connect(timer, SIGNAL(timeout()), this, SLOT(newGeneration()));
@@ -63,19 +63,30 @@ void GameWidget::setFieldWidth(int width)
 {
     _changed = true;
     _width = static_cast<size_t>(width);
+    if (_square) {
+        _height = static_cast<size_t>(width);
+        emit heightChanged(width);
+    }
 }
 
 void GameWidget::setParametrs()
 {
-    if(_changed)
-    {
-        if(game.getMaxSize().first <= _width && game.getMinSize().first >= _width)
-            game.setWidth(_width);
-        if(game.getMaxSize().second <= _height && game.getMinSize().second >= _height)
-            game.setHeight(_height);
-        timer->setInterval(_interval);
+   if(_changed) {
+        game.setWidth(_width);
+        game.setHeight(_height);
         _changed = false;
+        game.reset();
+        update();
     }
+}
+
+void GameWidget::setSquareField(bool ok){
+    _square = true;
+}
+
+void GameWidget::setCustomField(bool ok)
+{
+    _square = false;
 }
 
 void GameWidget::startGame()
@@ -132,14 +143,17 @@ void GameWidget::paintUniverse(QPainter & p)
     size_t x = 0u, y = 0u;
     double cellWidth = static_cast<double>(width()) / game.getSize().first;
     double cellHeight = static_cast<double>(height()) / game.getSize().second;
+
     for(y = 1u; y <= game.getSize().second; y++) {
         for(x = 1u; x <= game.getSize().first; x++) {
-            if(game.isAlive(x,y) == true) { // if there is any sense to paint it
+            if(game.isAlive(x,y) == true) {
                 qreal left = static_cast<qreal>(cellWidth * x - cellWidth); // margin from left
                 qreal top  = static_cast<qreal>(cellHeight * y - cellHeight); // margin from top
+
                 QRectF r(left, top, static_cast<qreal>(cellWidth),
                                     static_cast<qreal>(cellHeight));
-                p.fillRect(r, QBrush(myMasterColor)); // fill cell with brush of main color
+
+                p.fillRect(r, QBrush(myMasterColor));
             }
         }
     }
@@ -194,4 +208,44 @@ int GameWidget::maxWidth()
 int GameWidget::minWidth()
 {
     return static_cast<int>(game.getMinSize().first);
+}
+
+QString GameWidget::dump()
+{
+    char temp;
+    QString data = "";
+    for(size_t y = 1; y <= game.getSize().second; y++) {
+        for(size_t x = 1; x <= game.getSize().first; x++) {
+            if(game.isAlive(x,y) == true) {
+                temp = '*';
+            } else {
+                temp = 'o';
+            }
+            data.append(temp);
+        }
+        data.append("\n");
+    }
+    return data;
+}
+
+void GameWidget::setDump(const QString & data)
+{
+    int current = 0;
+    game.reset();
+    for(size_t y = 1; y <= game.getSize().second; y++) {
+        for(size_t x = 1; x <= game.getSize().first; x++) {
+            if(data[current] == '*')
+                game.setCellAlive(x, y);
+            else
+                game.setCellDead(x,y);
+            current++;
+        }
+        current++;
+    }
+    update();
+}
+
+int GameWidget::square()
+{
+    return (_square ? 1 : 2);
 }

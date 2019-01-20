@@ -16,7 +16,6 @@ public:
     inline bool isAlive(size_t x, size_t y);
 
     void reset();
-    //void clear();
     void resize(std::pair<size_t, size_t> newSize);
     void setHeight(size_t height);
     void setWidth(size_t width);

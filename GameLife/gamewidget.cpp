@@ -23,11 +23,10 @@ GameWidget::GameWidget(QWidget * parent) :
     myMasterColor("#ff5600"),
     _width(game.getMinSize().first),
     _height(game.getMinSize().second),
-    _interval(50),
     _changed(false),
     _square(true)
 {
-    timer->setInterval(_interval);
+    timer->setInterval(50);
     connect(timer, SIGNAL(timeout()), this, SLOT(newGeneration()));
 }
 
@@ -131,12 +130,12 @@ void GameWidget::paintGrid(QPainter & p)
     gridColor.setAlpha(10); // must be lighter than main color
     p.setPen(gridColor);
 
-    double cellWidth = static_cast<double>(width()) / game.getSize().first; // width of the widget / number of cells at one row
-    for(double k = cellWidth; k < width(); k += cellWidth)
+    int cellWidth = static_cast<double>(width()) / game.getSize().first + 0.5; // width of the widget / number of cells at one row
+    for(int k = cellWidth; k < width(); k += cellWidth)
         p.drawLine(k, 0, k, height());
 
-    double cellHeight = static_cast<double>(height()) / game.getSize().second; // height of the widget / number of cells at one row
-    for(double k = cellHeight; k < height(); k += cellHeight)
+    int cellHeight = static_cast<double>(height()) / game.getSize().second + 0.5; // height of the widget / number of cells at one row
+    for(int k = cellHeight; k < height(); k += cellHeight)
         p.drawLine(0, k, width(), k);
 
     p.drawRect(borders);
@@ -219,40 +218,18 @@ int GameWidget::minWidth()
     return static_cast<int>(game.getMinSize().first);
 }
 
-QString GameWidget::dump()
-{
-    char temp;
-    QString data = "";
-    for(size_t y = 0u; y < game.getSize().second; y++) {
-        for(size_t x = 0u; x < game.getSize().first; x++) {
-            if(game.isAlive(x,y) == true) {
-                temp = '*';
-            } else {
-                temp = 'o';
-            }
-            data.append(temp);
-        }
-        data.append("\n");
-    }
-    return data;
-}
+//QString GameWidget::dump()
+//{
+  //  QString data;
+    //game.dump(data);
+ //   return data;
+//}
 
-void GameWidget::setDump(const QString & data)
-{
-    int current = 0;
-    game.reset();
-    for(size_t y = 0u; y < game.getSize().second; y++) {
-        for(size_t x = 0u; x < game.getSize().first; x++) {
-            if(data[current] == '*')
-                game.setCellAlive(x, y);
-            else
-                game.setCellDead(x,y);
-            current++;
-        }
-        current++;
-    }
-    update();
-}
+//void GameWidget::setDump(const QString & data)
+//{
+//    game.setDump(data);
+ //   update();
+//}
 
 int GameWidget::square()
 {

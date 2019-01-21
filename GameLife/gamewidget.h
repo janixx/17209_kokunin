@@ -57,19 +57,22 @@ public slots:
     QColor masterColor();
     void setMasterColor(const QColor &color);
 
-    QString dump();
-    void setDump(const QString &data);
+    //QString dump();
+    //void setDump(const QString &data);
 
 protected slots:
     void paintGrid(QPainter & p);
     void paintUniverse(QPainter & p);
     void newGeneration();
 
+public:
+    Game game;
+
 private:
     QTimer * timer;
     QColor myMasterColor;
     QColor currentColor;
-    Game game;
+
     size_t _width;
     size_t _height;
     //int _interval;

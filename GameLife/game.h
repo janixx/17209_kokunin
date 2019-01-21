@@ -3,10 +3,21 @@
 
 #include <iostream>
 #include <vector>
+#include <QString>
 
+class QTextStream;
+class QFile;
 
 class Game
 {
+public:
+    struct configs {
+        int w, h;
+        int r, g, b;
+        int t;
+        int square;
+
+    };
 public:
     Game(std::pair<size_t, size_t> sz = minSize, std::pair<int, int> rg = std::make_pair(2,3));
     ~Game() {}
@@ -23,6 +34,11 @@ public:
     void setCellAlive(size_t x, size_t y);
     void setCellDead(size_t x, size_t y);
     void setCellReverse(size_t x, size_t y);
+
+    void dump(QString & data);
+    void setDump(const QString & data);
+    configs load(QTextStream & in);
+    void save(QFile & file, const configs & conf);
 
     const std::vector<bool> & getUniverse() const;
     const std::pair<int, int> & getRange() const;

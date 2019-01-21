@@ -74,7 +74,7 @@ void MainWindow::selectMasterColor()
 void MainWindow::saveGame()
 {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save current game"),
-                            "C:/Users/Admin/Documents/QtProjects/GameLife/Saves", tr("Conway's Game *.life Files (*.life)"));
+                            QDir::homePath() + "/Documents/QtProjects/GameLife/Saves", tr("Conway's Game *.life Files (*.life)"));
     if(filename.length() < 1)
         return;
 
@@ -82,31 +82,16 @@ void MainWindow::saveGame()
     if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate/* clearing thsi file */))
         return;
 
+    Game::configs conf;
 
-
-    QString buf = QString::number(ui->game->square())+"\n";
-    file.write(buf.toUtf8());
-
-    buf.clear();
-    buf = QString::number(ui->game->fieldWidth())+"\n";
-    file.write(buf.toUtf8());
-
-    buf.clear();
-    buf = QString::number(ui->game->fieldHeight())+"\n";
-    file.write(buf.toUtf8());
-
-    file.write(ui->game->dump().toUtf8());
-
-    buf.clear();
+    conf.square = ui->game->square();
     QColor color = ui->game->masterColor();
-    buf = QString::number(color.red())+" "+
-          QString::number(color.green())+" "+
-          QString::number(color.blue())+"\n";
-    file.write(buf.toUtf8());
+    conf.r = color.red();
+    conf.g = color.green();
+    conf.b = color.blue();
+    conf.t = ui->intervalSlider->value();
 
-    buf.clear();
-    buf = QString::number(ui->intervalSlider->value())+"\n";
-    file.write(buf.toUtf8());
+    ui->game->game.save(file, conf);
 
     file.close();
 }
@@ -115,7 +100,7 @@ void MainWindow::loadGame()
 {
     QString filename = QFileDialog::getOpenFileName(this,
                                 tr("Open saved game "),
-                        "C:/Users/Admin/Documents/QtProjects/GameLife/Saves"/*QDir::homePath()*/,
+                        QDir::homePath() + "/Documents/QtProjects/GameLife/Saves",
                                 tr("Conway's Game of Life file (*.life)"));
     if(filename.length() < 1)
         return;
@@ -124,46 +109,27 @@ void MainWindow::loadGame()
         return;
     QTextStream in(&file);
 
-    int qv;
-    in >> qv;
+    Game::configs conf = ui->game->game.load(in);
+    ui->game->update();
 
-    int wv;
-    in >> wv;
-    ui->game->setFieldWidth(wv);
 
-    int hv;
-    in >> hv;
-    ui->game->setFieldHeight(hv);
 
-    QString dump="";
-    for(int k=0; k < hv ; k++) {
-        QString t;
-        in >> t;
-        dump.append(t+"\n");
-    }
+    ui->widthSlider->setValue(conf.w);
+    ui->heightSlider->setValue(conf.h);
 
-    if(qv == 1 && wv == hv)
+    if(conf.square == 1)
         ui->squareButton->click();
     else
         ui->customButton->click();
 
-    ui->game->setParametrs();
-    ui->game->setDump(dump);
-
-    if(qv == 1 && wv != hv)
-        ui->squareButton->click();
-
-    int r = 0, g = 0, b = 0;
-    in >> r >> g >> b;
-    currentColor = QColor(r,g,b);
+    currentColor = QColor(conf.r,conf.g,conf.b);
     ui->game->setMasterColor(currentColor);
     QPixmap icon(16, 16);
     icon.fill(currentColor);
     ui->colorButton->setIcon( QIcon(icon) );
 
-    in >> r;
-    ui->intervalSlider->setValue(r);
-    ui->game->setInterval(r);
+    ui->intervalSlider->setValue(conf.t);
+    ui->game->setInterval(conf.t);
 
     file.close();
 }

@@ -1,3 +1,7 @@
+#include <QFile>
+#include <QString>
+#include <QTextStream>
+
 #include "game.h"
 
 std::pair<size_t, size_t> Game::maxSize = std::make_pair(500,500);
@@ -136,4 +140,90 @@ const std::pair<size_t, size_t> & Game::getMaxSize() const
 const std::pair<size_t, size_t> & Game::getMinSize() const
 {
     return Game::minSize;
+}
+
+void Game::dump(QString & data)
+{
+    data.clear();
+    char temp;
+    for(size_t y = 0u; y < size.second; y++) {
+        for(size_t x = 0u; x < size.first; x++) {
+            if(isAlive(x,y) == true) {
+                temp = '*';
+            } else {
+                temp = 'o';
+            }
+            data.append(temp);
+        }
+        data.append("\n");
+    }
+}
+
+void Game::setDump(const QString & data)
+{
+    int current = 0;
+    reset();
+    for(size_t y = 0u; y < size.second; y++) {
+        for(size_t x = 0u; x < size.first; x++) {
+            if(data[current] == '*')
+                universe[y * size.first + x] = true;
+            //else
+            //    universe[y * size.first + x] = false;
+            current++;
+        }
+        current++;
+    }
+}
+
+Game::configs Game::load(QTextStream & in)
+{
+    Game::configs par;
+    in >> par.square;
+    in >> par.w;
+    in >> par.h;
+
+    size.first = static_cast<size_t>(par.w);
+    size.second = static_cast<size_t>(par.h);
+
+    QString data;
+
+    for(int k=0; k < par.h ; k++) {
+        QString t;
+        in >> t;
+        data.append(t+"\n");
+    }
+    setDump(data);
+
+    in >> par.r >> par.g >> par.b;
+    in >> par.t;
+
+    return par;
+}
+
+void Game::save(QFile & file, const configs & conf)
+{
+    QString buf = QString::number(conf.square)+"\n";
+    file.write(buf.toUtf8());
+
+    buf.clear();
+    buf = QString::number(static_cast<int>(size.first))+"\n";
+    file.write(buf.toUtf8());
+
+    buf.clear();
+    buf = QString::number(static_cast<int>(size.second))+"\n";
+    file.write(buf.toUtf8());
+
+    buf.clear();
+    dump(buf);
+    file.write(buf.toUtf8());
+
+    buf.clear();
+    buf = QString::number(conf.r)+" "+
+          QString::number(conf.g)+" "+
+          QString::number(conf.b)+"\n";
+    file.write(buf.toUtf8());
+
+    buf.clear();
+    buf = QString::number(conf.t)+"\n";
+    file.write(buf.toUtf8());
 }

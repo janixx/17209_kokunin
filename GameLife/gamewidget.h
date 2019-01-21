@@ -72,7 +72,7 @@ private:
     Game game;
     size_t _width;
     size_t _height;
-    int _interval;
+    //int _interval;
     bool _changed;
     bool _square;
 };

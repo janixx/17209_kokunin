@@ -14,7 +14,7 @@ int GameWidget::interval()
 
 void GameWidget::setInterval(int msec)
 {
-    _interval = msec;
+    timer->setInterval(msec);
 }
 
 GameWidget::GameWidget(QWidget * parent) :

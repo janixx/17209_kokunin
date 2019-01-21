@@ -8,17 +8,17 @@ Game::Game(std::pair<size_t, size_t> sz, std::pair<int, int> rg) : //ADD CHECK P
     size(sz),
     range(rg)
 {
-    universe.resize((size.first + 2) * (size.second + 2));
-    generation.resize((size.first + 2) * (size.second + 2));
+    universe.resize((size.first) * (size.second));
+    generation.resize((size.first) * (size.second));
 }
 
 bool Game::newGenerate()
 {
     size_t notChanged = 0;
     generation.clear();
-    generation.resize((size.first + 2) * (size.second + 2));
-    for(size_t x=1; x <= size.first; x++) {
-        for(size_t y=1; y <= size.second; y++) {
+    generation.resize((size.first) * (size.second));
+    for(size_t x = 0; x < size.first; x++) {
+        for(size_t y = 0; y < size.second; y++) {
             generation[y * size.first + x] = willAlive(x,y);
             if(generation[y * size.first + x] == universe[y * size.first + x])
                 notChanged++;
@@ -39,14 +39,18 @@ inline bool Game::isAlive(size_t x, size_t y)
 bool Game::willAlive(size_t x, size_t y)
 {
     int power = 0;
-    power += universe[(y + 1) * size.first +  x];
-    power += universe[(y - 1) * size.first +  x];
-    power += universe[y * size.first +  x + 1];
-    power += universe[y * size.first +  x - 1];
-    power += universe[(y - 1) * size.first +  x - 1];
-    power += universe[(y - 1) * size.first +  x + 1];
-    power += universe[(y + 1) * size.first +  x - 1];
-    power += universe[(y + 1) * size.first +  x + 1];
+    size_t prev_x = (x > 0 ? x - 1 : size.first - 1),
+        prev_y = (y > 0 ? y - 1 : size.second - 1),
+        next_x = (x < size.first - 1 ? x + 1 : 0),
+        next_y = (y < size.second - 1 ? y + 1 : 0);
+    power += universe[prev_y * size.first +  x];
+    power += universe[next_y * size.first +  x];
+    power += universe[y * size.first +  next_x];
+    power += universe[y * size.first +  prev_x];
+    power += universe[prev_y * size.first +  prev_x];
+    power += universe[prev_y * size.first +  next_x];
+    power += universe[next_y * size.first +  prev_x];
+    power += universe[next_y * size.first +  next_x];
     if (!isAlive(x,y) && power == range.second)
            return true;
     if (isAlive(x,y) && power >= range.first && power <= range.second)
@@ -59,8 +63,8 @@ void Game::reset()
 {
     universe.clear();
     generation.clear();
-    universe.resize((size.first + 2) * (size.second + 2));
-    generation.resize((size.first + 2) * (size.second + 2));
+    universe.resize((size.first) * (size.second));
+    generation.resize((size.first) * (size.second));
 }
 
 void Game::resize(std::pair<size_t, size_t> newSize)//FIX ME

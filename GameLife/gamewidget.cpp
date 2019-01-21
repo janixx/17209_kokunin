@@ -124,17 +124,17 @@ void GameWidget::setMasterColor(const QColor &color)
 void GameWidget::paintGrid(QPainter & p)
 {
     QColor gridColor = ("#000");
-    QRect borders(0, 0, width()-1, height()-1); // borders of the universe
-    //QColor gridColor = myMasterColor; // color of the grid
+    gridColor.setAlpha(150);
+    QRect borders(0, 0, width()-1, height()-1);
     gridColor.setAlpha(10); // must be lighter than main color
     p.setPen(gridColor);
 
     double cellWidth = static_cast<double>(width()) / game.getSize().first; // width of the widget / number of cells at one row
-    for(double k = cellWidth; k <= width(); k += cellWidth)
+    for(double k = cellWidth; k < width(); k += cellWidth)
         p.drawLine(k, 0, k, height());
 
     double cellHeight = static_cast<double>(height()) / game.getSize().second; // height of the widget / number of cells at one row
-    for(double k = cellHeight; k <= height(); k += cellHeight)
+    for(double k = cellHeight; k < height(); k += cellHeight)
         p.drawLine(0, k, width(), k);
 
     p.drawRect(borders);
@@ -146,11 +146,11 @@ void GameWidget::paintUniverse(QPainter & p)
     double cellWidth = static_cast<double>(width()) / game.getSize().first;
     double cellHeight = static_cast<double>(height()) / game.getSize().second;
 
-    for(y = 1u; y <= game.getSize().second; y++) {
-        for(x = 1u; x <= game.getSize().first; x++) {
+    for(y = 0u; y < game.getSize().second; y++) {
+        for(x = 0u; x < game.getSize().first; x++) {
             if(game.isAlive(x,y) == true) {
-                qreal left = static_cast<qreal>(cellWidth * x - cellWidth); // margin from left
-                qreal top  = static_cast<qreal>(cellHeight * y - cellHeight); // margin from top
+                qreal left = static_cast<qreal>(cellWidth * x);
+                qreal top  = static_cast<qreal>(cellHeight * y);
 
                 QRectF r(left, top, static_cast<qreal>(cellWidth),
                                     static_cast<qreal>(cellHeight));
@@ -173,8 +173,8 @@ void GameWidget::mousePressEvent(QMouseEvent *e)
     emit environmentChanged(true);
     double cellWidth = static_cast<double>(width()) / game.getSize().first;
     double cellHeight = static_cast<double>(height()) / game.getSize().second;
-    size_t y = static_cast<size_t>(e->y() / cellHeight) + 1;
-    size_t x = static_cast<size_t>(e->x() / cellWidth) + 1;
+    size_t y = static_cast<size_t>(e->y() / cellHeight);
+    size_t x = static_cast<size_t>(e->x() / cellWidth);
 
     game.setCellReverse(x, y);
     update();
@@ -182,10 +182,15 @@ void GameWidget::mousePressEvent(QMouseEvent *e)
 
 void GameWidget::mouseMoveEvent(QMouseEvent * e)
 {
+    if (e->y() >= height() || e->y() < 0)
+        return;
+    if (e->x() >= width() || e->x() < 0)
+        return;
+
     double cellWidth = static_cast<double>(width()) / game.getSize().first;
     double cellHeight = static_cast<double>(height()) / game.getSize().second;
-    size_t y = static_cast<size_t>(e->y() / cellHeight) + 1;
-    size_t x = static_cast<size_t>(e->x() / cellWidth) + 1;
+    size_t y = static_cast<size_t>(e->y() / cellHeight);
+    size_t x = static_cast<size_t>(e->x() / cellWidth);
     if(!game.isAlive(x, y)){                //if current cell is empty,fill in it
         game.setCellAlive(x, y);
         update();
@@ -216,8 +221,8 @@ QString GameWidget::dump()
 {
     char temp;
     QString data = "";
-    for(size_t y = 1; y <= game.getSize().second; y++) {
-        for(size_t x = 1; x <= game.getSize().first; x++) {
+    for(size_t y = 0u; y < game.getSize().second; y++) {
+        for(size_t x = 0u; x < game.getSize().first; x++) {
             if(game.isAlive(x,y) == true) {
                 temp = '*';
             } else {
@@ -234,8 +239,8 @@ void GameWidget::setDump(const QString & data)
 {
     int current = 0;
     game.reset();
-    for(size_t y = 1; y <= game.getSize().second; y++) {
-        for(size_t x = 1; x <= game.getSize().first; x++) {
+    for(size_t y = 0u; y < game.getSize().second; y++) {
+        for(size_t x = 0u; x < game.getSize().first; x++) {
             if(data[current] == '*')
                 game.setCellAlive(x, y);
             else

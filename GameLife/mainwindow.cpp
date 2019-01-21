@@ -37,8 +37,8 @@ MainWindow::MainWindow(QWidget * parent) :
     connect(ui->intervalSlider, SIGNAL(valueChanged(int)), ui->game, SLOT(setInterval(int)));
 
 
-    connect(ui->game, SIGNAL(gameStart(bool)),ui->applyButton,SLOT(setDisabled(bool)));
-    connect(ui->game,SIGNAL(gameEnds(bool)),ui->applyButton,SLOT(setEnabled(bool)));
+    connect(ui->game, SIGNAL(gameStart(bool)), ui->applyButton, SLOT(setDisabled(bool)));
+    connect(ui->game, SIGNAL(gameEnds(bool)), ui->applyButton, SLOT(setEnabled(bool)));
 
     connect(ui->customButton,SIGNAL(toggled(bool)), ui->game, SLOT(setCustomField(bool)));
     connect(ui->squareButton,SIGNAL(toggled(bool)), ui->game, SLOT(setSquareField(bool)));
@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget * parent) :
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveGame()));
     connect(ui->loadButton, SIGNAL(clicked()), this, SLOT(loadGame()));
 
-    ui->mainLayout->setStretchFactor(ui->setLayout, 2);
+    //ui->mainLayout->setStretchFactor(ui->setLayout, 2);
 }
 
 MainWindow::~MainWindow()
@@ -115,9 +115,9 @@ void MainWindow::loadGame()
 {
     QString filename =
                     QFileDialog::getOpenFileName(this,
-                                tr("Open saved game"),
+                                tr("Open saved game "),
                                     QDir::homePath(),
-                                tr("Conway's Game Of Life File (*.life)"));
+                                tr("Conway's Game of Life file (*.life)"));
     if(filename.length() < 1)
         return;
     QFile file(filename);
@@ -154,14 +154,17 @@ void MainWindow::loadGame()
     if(qv == 1 && wv != hv)
         ui->squareButton->click();
 
-    int r = 0, g = 0, b = 0; // RGB color
+    int r = 0, g = 0, b = 0;
     in >> r >> g >> b;
     currentColor = QColor(r,g,b);
-    ui->game->setMasterColor(currentColor); // sets color of the dots
-    QPixmap icon(16, 16); // icon on the button
-    icon.fill(currentColor); // fill with new color
-    ui->colorButton->setIcon( QIcon(icon) ); // set icon for button
-    in >> r; // r will be interval number
+    ui->game->setMasterColor(currentColor);
+    QPixmap icon(16, 16);
+    icon.fill(currentColor);
+    ui->colorButton->setIcon( QIcon(icon) );
+
+    in >> r;
     ui->intervalSlider->setValue(r);
     ui->game->setInterval(r);
+
+    file.close();
 }

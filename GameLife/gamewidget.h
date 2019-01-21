@@ -32,6 +32,7 @@ signals:
     //when one of the config has been changed, emit this signal
     void gameStart(bool ok);
     void heightChanged(int x);
+    void widthChanged(int y);
 
 public slots:
     void startGame(); // start

@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget * parent) :
     connect(ui->customButton,SIGNAL(toggled(bool)), ui->game, SLOT(setCustomField(bool)));
     connect(ui->squareButton,SIGNAL(toggled(bool)), ui->game, SLOT(setSquareField(bool)));
     connect(ui->game, SIGNAL(heightChanged(int)), ui->heightSlider, SLOT(setValue(int)));
+    connect(ui->game, SIGNAL(widthChanged(int)), ui->widthSlider, SLOT(setValue(int)));
 
     connect(ui->colorButton, SIGNAL(clicked()), this, SLOT(selectMasterColor()));
 
@@ -81,25 +82,29 @@ void MainWindow::saveGame()
     if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return;
 
-    QString buf = QString::number(ui->game->fieldWidth())+"\n";
-    file.write(buf.toUtf8());
-    buf.clear();
 
-    buf.number(ui->game->fieldHeight())+"\n";
+
+    QString buf = QString::number(ui->game->square())+"\n";
     file.write(buf.toUtf8());
 
     buf.clear();
-    buf.number(ui->game->square())+"\n";
+    buf = QString::number(ui->game->fieldWidth())+"\n";
+    file.write(buf.toUtf8());
+
+    buf.clear();
+    buf = QString::number(ui->game->fieldHeight())+"\n";
+    file.write(buf.toUtf8());
+
     file.write(ui->game->dump().toUtf8());
 
     buf.clear();
     QColor color = ui->game->masterColor();
     buf = QString::number(color.red())+" "+
-                  QString::number(color.green())+" "+
-                  QString::number(color.blue())+"\n";
+          QString::number(color.green())+" "+
+          QString::number(color.blue())+"\n";
     file.write(buf.toUtf8());
-    buf.clear();
 
+    buf.clear();
     buf = QString::number(ui->intervalSlider->value())+"\n";
     file.write(buf.toUtf8());
 
@@ -120,6 +125,9 @@ void MainWindow::loadGame()
         return;
     QTextStream in(&file);
 
+    int qv;
+    in >> qv;
+
     int wv;
     in >> wv;
     ui->game->setFieldWidth(wv);
@@ -128,22 +136,25 @@ void MainWindow::loadGame()
     in >> hv;
     ui->game->setFieldHeight(hv);
 
-    int qv;
-    in >> qv;
-    if(qv == 1)
-        ui->squareButton->click();
-    else
-        ui->customButton->click();
-
     QString dump="";
-    for(int k=0; k != hv ; k++) {
+    for(int k=0; k < hv ; k++) {
         QString t;
         in >> t;
         dump.append(t+"\n");
     }
+
+    if(qv == 1 && wv == hv)
+        ui->squareButton->click();
+    else
+        ui->customButton->click();
+
+    ui->game->setParametrs();
     ui->game->setDump(dump);
 
-    int r,g,b; // RGB color
+    if(qv == 1 && wv != hv)
+        ui->squareButton->click();
+
+    int r = 0, g = 0, b = 0; // RGB color
     in >> r >> g >> b;
     currentColor = QColor(r,g,b);
     ui->game->setMasterColor(currentColor); // sets color of the dots

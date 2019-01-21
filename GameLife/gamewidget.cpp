@@ -57,6 +57,7 @@ void GameWidget::setFieldHeight(int height)
 {
     _changed = true;
     _height = static_cast<size_t>(height);
+    emit heightChanged(height);
 }
 
 void GameWidget::setFieldWidth(int width)
@@ -67,6 +68,7 @@ void GameWidget::setFieldWidth(int width)
         _height = static_cast<size_t>(width);
         emit heightChanged(width);
     }
+    emit widthChanged(width);
 }
 
 void GameWidget::setParametrs()
@@ -80,11 +82,11 @@ void GameWidget::setParametrs()
     }
 }
 
-void GameWidget::setSquareField(bool ok){
+void GameWidget::setSquareField(bool ){
     _square = true;
 }
 
-void GameWidget::setCustomField(bool ok)
+void GameWidget::setCustomField(bool )
 {
     _square = false;
 }
@@ -184,8 +186,8 @@ void GameWidget::mouseMoveEvent(QMouseEvent * e)
     double cellHeight = static_cast<double>(height()) / game.getSize().second;
     size_t y = static_cast<size_t>(e->y() / cellHeight) + 1;
     size_t x = static_cast<size_t>(e->x() / cellWidth) + 1;
-    if(!game.willAlive(x, y)){                //if current cell is empty,fill in it
-        game.setCellDead(x, y);
+    if(!game.isAlive(x, y)){                //if current cell is empty,fill in it
+        game.setCellAlive(x, y);
         update();
     }
 }

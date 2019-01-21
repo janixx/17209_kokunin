@@ -87,7 +87,7 @@ void Game::setCellAlive(size_t x, size_t y)
 
 void Game::setCellDead(size_t x, size_t y)
 {
-    universe[y * size.first + x] = true;
+    universe[y * size.first + x] = false;
 }
 
 void Game::setCellReverse(size_t x, size_t y)

@@ -1,8 +1,10 @@
 #ifndef GAMEWIDGET_H
 #define GAMEWIDGET_H
 
-#include <QTimer>
 #include <QWidget>
+
+class QString;
+class QTimer;
 
 #include "game.h"
 

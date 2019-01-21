@@ -1,6 +1,6 @@
 #include "game.h"
 
-std::pair<size_t, size_t> Game::maxSize = std::make_pair(2000,2000);
+std::pair<size_t, size_t> Game::maxSize = std::make_pair(500,500);
 std::pair<size_t, size_t> Game::minSize = std::make_pair(10,10);
 std::pair<int, int> Game::maxRange = std::make_pair(1,9);
 
@@ -31,7 +31,7 @@ bool Game::newGenerate()
     return true;
 }
 
-inline bool Game::isAlive(size_t x, size_t y)
+bool Game::isAlive(size_t x, size_t y)
 {
     return universe[y * size.first +  x];
 }

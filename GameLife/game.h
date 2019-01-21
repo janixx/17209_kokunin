@@ -8,12 +8,12 @@
 class Game
 {
 public:
-    Game(std::pair<size_t, size_t> sz = std::make_pair(100,75), std::pair<int, int> rg = std::make_pair(2,3));
+    Game(std::pair<size_t, size_t> sz = minSize, std::pair<int, int> rg = std::make_pair(2,3));
     ~Game() {}
 
     bool newGenerate();// true -- if new gen is differ from all old gens
     bool willAlive(size_t x, size_t y);
-    inline bool isAlive(size_t x, size_t y);
+    bool isAlive(size_t x, size_t y);
 
     void reset();
     void resize(std::pair<size_t, size_t> newSize);

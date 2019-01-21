@@ -15,15 +15,15 @@ MainWindow::MainWindow(QWidget * parent) :
     ui->setupUi(this);
 
     QPixmap icon(16, 16);
-    icon.fill(currentColor);
+    icon.fill(ui->game->masterColor());
     ui->colorButton->setIcon( QIcon(icon) );
 
     ui->colorButton->setIcon(QIcon(icon));
     ui->widthSlider->setRange(ui->game->minWidth(), ui->game->maxWidth());
     ui->heightSlider->setRange(ui->game->minHeight(), ui->game->maxHeight());
     ui->intervalSlider->setRange(50, 1000);
-    ui->widthSlider->setValue(ui->game->minWidth());
-    ui->heightSlider->setValue(ui->game->minHeight());
+    ui->widthSlider->setValue(ui->game->fieldWidth());
+    ui->heightSlider->setValue(ui->game->fieldHeight());
     ui->intervalSlider->setValue(ui->game->interval());
     ui->squareButton->click();
 
@@ -74,12 +74,12 @@ void MainWindow::selectMasterColor()
 void MainWindow::saveGame()
 {
     QString filename = QFileDialog::getSaveFileName(this, tr("Save current game"),
-                                            QDir::homePath(), tr("Conway's Game *.life Files (*.life)"));
+                            "C:/Users/Admin/Documents/QtProjects/GameLife/Saves", tr("Conway's Game *.life Files (*.life)"));
     if(filename.length() < 1)
         return;
 
     QFile file(filename);
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate/* clearing thsi file */))
         return;
 
 
@@ -113,10 +113,9 @@ void MainWindow::saveGame()
 
 void MainWindow::loadGame()
 {
-    QString filename =
-                    QFileDialog::getOpenFileName(this,
+    QString filename = QFileDialog::getOpenFileName(this,
                                 tr("Open saved game "),
-                                    QDir::homePath(),
+                        "C:/Users/Admin/Documents/QtProjects/GameLife/Saves"/*QDir::homePath()*/,
                                 tr("Conway's Game of Life file (*.life)"));
     if(filename.length() < 1)
         return;

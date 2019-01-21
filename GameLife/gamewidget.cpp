@@ -2,6 +2,8 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QString>
+#include <QTimer>
 
 #include "gamewidget.h"
 
@@ -18,7 +20,7 @@ void GameWidget::setInterval(int msec)
 GameWidget::GameWidget(QWidget * parent) :
     QWidget(parent),
     timer(new QTimer(this)),
-    myMasterColor("#000"),
+    myMasterColor("#ff5600"),
     _width(game.getMinSize().first),
     _height(game.getMinSize().second),
     _interval(50),

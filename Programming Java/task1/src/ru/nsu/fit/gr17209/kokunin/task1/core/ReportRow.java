@@ -5,7 +5,7 @@ import java.util.Map;
 public class ReportRow {
     private String row;
 
-    ReportRow(String word, Integer frequency, Integer count) {
+    public ReportRow(String word, Integer frequency, Integer count) {
         this.row = new String(word + "***" +
                 Integer.toString(count) + "***" +
                 Double.toString((frequency.doubleValue() * 100 / count.doubleValue())) + '%');

@@ -15,6 +15,7 @@ public class WordReader {
         if (scanner.hasNext()) {
             return scanner.next();
         }
+        scanner.close();
         return null;
     }
 }

@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 public class WordReader {
     private Scanner scanner;
+
     WordReader(BufferedReader reader) {
         Pattern pattern = Pattern.compile("[^а-яА-Яa-zA-Z0-9]+");
         this.scanner = new Scanner(reader).useDelimiter(pattern);

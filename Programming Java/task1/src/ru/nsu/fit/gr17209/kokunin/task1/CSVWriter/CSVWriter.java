@@ -8,14 +8,22 @@ import java.io.IOException;
 import java.util.List;
 
 public class CSVWriter implements ReportWriter {
-    private List<ReportRow> list;
+    private BufferedWriter writer;
 
-    CSVWriter(List<ReportRow> list) {
-        this.list = list;
+    public CSVWriter(BufferedWriter writer) {
+        this.writer = writer;
     }
 
     @Override
-    public void writeReport(BufferedWriter writer) throws IOException {
-
+    public void writeReport(List<ReportRow> reportList) throws IOException {
+        for (ReportRow node : reportList) {
+            StringBuilder toWrite = new StringBuilder();
+            for (String elem : node.getData()) {
+                toWrite.append(elem).append(", ");
+            }
+            toWrite.delete(toWrite.length() - 2, toWrite.length());
+            writer.write(toWrite.toString(),0,toWrite.length());
+            writer.newLine();
+        }
     }
 }

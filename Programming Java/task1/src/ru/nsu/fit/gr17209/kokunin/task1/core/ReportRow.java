@@ -3,15 +3,13 @@ package ru.nsu.fit.gr17209.kokunin.task1.core;
 import java.util.Map;
 
 public class ReportRow {
-    private String row;
+    private String[] data;
 
-    public ReportRow(String word, Integer frequency, Integer count) {
-        this.row = new String(word + "***" +
-                Integer.toString(count) + "***" +
-                Double.toString((frequency.doubleValue() * 100 / count.doubleValue())) + '%');
+    public ReportRow(String... wordData) {
+        data = wordData;
     }
 
-    public String getRow(){
-        return row;
+    public String[] getData() {
+        return data;
     }
 }

@@ -12,7 +12,7 @@ public class FrequencyReportGenerator
     implements ReportGenerator {
     private WordStat stat;
 
-    FrequencyReportGenerator(WordStat stat) {
+    public FrequencyReportGenerator(WordStat stat) {
         this.stat = stat;
     }
 
@@ -27,8 +27,14 @@ public class FrequencyReportGenerator
         });
         List<ReportRow> list = new ArrayList<>();
         for (Map.Entry<String, Integer> elem : entryList) {
-            list.add(new ReportRow(elem.getKey(),elem.getValue(),stat.getWordCount()));
+            list.add(new ReportRow
+                    (elem.getKey(),
+                    elem.getValue().toString(),
+                    Double.toString((double)(100 * elem.getValue()) / stat.getWordCount()) + '%'));
         }
         return list;
+    }
+    public int getCount() {
+        return stat.getWordCount();
     }
 }

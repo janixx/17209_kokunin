@@ -1,4 +1,4 @@
-package ru.nsu.fit.gr17209.kokunin.task1.CSVWriter;
+package ru.nsu.fit.gr17209.kokunin.task1.csvwriter;
 
 import ru.nsu.fit.gr17209.kokunin.task1.core.ReportRow;
 import ru.nsu.fit.gr17209.kokunin.task1.core.ReportWriter;
@@ -25,5 +25,13 @@ public class CSVWriter implements ReportWriter {
             writer.write(toWrite.toString(),0,toWrite.length());
             writer.newLine();
         }
+    }
+
+    private static String prepareElem(String elem) {
+        if (elem.contains(",") || elem.contains("\"")) {// asb
+            elem.replace("\"", "\"\"");
+            elem = "\"" + elem + "\"";
+        }
+        return elem;
     }
 }

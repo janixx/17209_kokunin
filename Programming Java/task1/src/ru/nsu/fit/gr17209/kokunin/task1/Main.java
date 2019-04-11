@@ -41,6 +41,7 @@ public class Main {
             //writer.write("It, is, a, very \n" + "simple, example, of, CSV-Table \n");
             //writer.newLine();
             writer.flush();
+            writer.close();
         } catch (IOException exc) {
             System.err.println(exc.getMessage());
         }

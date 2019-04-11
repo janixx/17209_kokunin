@@ -8,7 +8,7 @@ public class WordReader {
     private Scanner scanner;
 
     WordReader(BufferedReader reader) {
-        Pattern pattern = Pattern.compile("[^а-яА-Яa-zA-Z0-9]+");
+        Pattern pattern = Pattern.compile("[^а-яА-Яa-zA-Z0-9]+");//!!! поменять паттерн - взять паттерн буква, например
         this.scanner = new Scanner(reader).useDelimiter(pattern);
     }
 

@@ -1,6 +1,6 @@
 package ru.nsu.fit.gr17209.kokunin.task1.core;
 
-import ru.nsu.fit.gr17209.kokunin.task1.CSVWriter.CSVWriter;
+import ru.nsu.fit.gr17209.kokunin.task1.csvwriter.CSVWriter;
 import ru.nsu.fit.gr17209.kokunin.task1.reports.FrequencyReportGenerator;
 
 import java.io.BufferedReader;

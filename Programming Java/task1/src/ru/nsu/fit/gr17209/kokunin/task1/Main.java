@@ -21,7 +21,7 @@ public class Main {
         } else if (args.length == 2) {
             try {
                 reader = new BufferedReader(new FileReader(args[0]));
-                writer = new BufferedWriter(new FileWriter(args[1]));
+                writer = new BufferedWriter(new FileWriter(args[1], false));
             } catch (FileNotFoundException exc) {
                 System.err.println(exc.getMessage());
                 System.out.println("File not found. I will use System.in");
@@ -38,6 +38,9 @@ public class Main {
         Controller control = new Controller(reader, writer);
         try {
             control.analyzeText();
+            //writer.write("It, is, a, very \n" + "simple, example, of, CSV-Table \n");
+            //writer.newLine();
+            writer.flush();
         } catch (IOException exc) {
             System.err.println(exc.getMessage());
         }

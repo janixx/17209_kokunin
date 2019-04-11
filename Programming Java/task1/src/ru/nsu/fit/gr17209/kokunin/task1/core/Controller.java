@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public class Controller {
     private WordReader reader;
-    private WordStat statisrics;
     private ReportWriter writer;
 
     public Controller(BufferedReader reader, BufferedWriter writer){

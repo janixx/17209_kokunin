@@ -12,12 +12,12 @@ public class Controller {
     private WordStat statisrics;
     private ReportWriter writer;
 
-    Controller(BufferedReader reader, BufferedWriter writer){
+    public Controller(BufferedReader reader, BufferedWriter writer){
         this.reader = new WordReader(reader);
         this.writer = new CSVWriter(writer);
     }
 
-    public void analyzeText() {
+    public void analyzeText() throws IOException {
         WordStat statistics = new WordStat();
         String word = null;
         while((word = reader.getWord())!= null) {

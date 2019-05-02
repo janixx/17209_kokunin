@@ -1,6 +1,6 @@
 package ru.nsu.fit.g17209.kokunin.task2.model.board;
 
-public class ChipBoard {
+public class    ChipBoard {
     private static final int SIZE = 8;
 
     private Cell[][] field;

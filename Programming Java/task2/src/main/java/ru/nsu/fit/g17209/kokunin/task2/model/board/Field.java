@@ -1,6 +1,6 @@
 package ru.nsu.fit.g17209.kokunin.task2.model.board;
 
-public class    ChipBoard {
+public class Field {
     private static final int SIZE = 8;
 
     private Cell[][] field;
@@ -8,7 +8,7 @@ public class    ChipBoard {
     private int countBlack;
     private int count;
 
-    public ChipBoard() {
+    public Field() {
         field = new Cell[SIZE][SIZE];
         /*for (Cell[] row : field) {
             for (Cell cell : row) {
@@ -17,7 +17,7 @@ public class    ChipBoard {
         }*/
     }
 
-    public void setCell(Position pos, CellFill fill) {
+    public void setCell(Position pos, CellContent fill) {
 
     }
 

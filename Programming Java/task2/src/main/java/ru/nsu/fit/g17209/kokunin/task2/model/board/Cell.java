@@ -1,33 +1,33 @@
 package ru.nsu.fit.g17209.kokunin.task2.model.board;
 
 public class Cell {
-    private CellFill content;
+    private CellContent content;
 
     public Cell() {
-        content = CellFill.EMPTY;
+        content = CellContent.EMPTY;
     }
 
     public boolean reverseChip() {
-        if (content == CellFill.EMPTY) {
+        if (content == CellContent.EMPTY) {
             return false;
         }
-        content = (content == CellFill.WHITE_CHIP ? CellFill.BLACK_CHIP : CellFill.WHITE_CHIP);
+        content = (content == CellContent.WHITE_CHIP ? CellContent.BLACK_CHIP : CellContent.WHITE_CHIP);
         return true;
     }
 
     public void setChipWhite() {
-        content = CellFill.WHITE_CHIP;
+        content = CellContent.WHITE_CHIP;
     }
 
     public void setChipBlack() {
-        content = CellFill.BLACK_CHIP;
+        content = CellContent.BLACK_CHIP;
     }
 
     public void clear() {
-        content = CellFill.EMPTY;
+        content = CellContent.EMPTY;
     }
 
-    public CellFill getChipColor() {
+    public CellContent getChipColor() {
         return content;
     }
 }

@@ -1,7 +1,7 @@
 package ru.nsu.fit.g17209.kokunin.task2.model.board;
 
 public class Field {
-    private static final int SIZE = 8;
+    public static final int SIZE = 8;
 
     private Cell[][] field;
     private int countWhite;
@@ -17,7 +17,7 @@ public class Field {
         }*/
     }
 
-    public void setCell(Position pos, CellContent fill) {
+    public void setCell(Position pos, CellFill fill) {
 
     }
 

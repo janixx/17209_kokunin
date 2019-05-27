@@ -1,7 +1,7 @@
 package ru.nsu.fit.g17209.kokunin.task2;
 
-import ru.nsu.fit.g17209.kokunin.task2.controller.CConfigs;
-import ru.nsu.fit.g17209.kokunin.task2.controller.Controller;
+import ru.nsu.fit.g17209.kokunin.task2.view.controller.VCConfigs;
+import ru.nsu.fit.g17209.kokunin.task2.view.controller.ViewController;
 
 public class Main {
 
@@ -9,7 +9,7 @@ public class Main {
         /*if (args.length < 2) {
             System.out.println("Too few arguments :(");
         }*/
-        CConfigs cConfigs = new CConfigs();
-        Controller c = new Controller(cConfigs);
+        VCConfigs cConfigs = new VCConfigs();
+        ViewController c = new ViewController(cConfigs);
     }
 }

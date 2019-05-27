@@ -1,5 +1,6 @@
 package ru.nsu.fit.g17209.kokunin.task2.model.board;
 
+@Deprecated
 public class Position {
     private int x;
     private int y;

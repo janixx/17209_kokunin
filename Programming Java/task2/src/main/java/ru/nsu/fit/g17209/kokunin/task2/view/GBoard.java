@@ -1,6 +1,7 @@
-package ru.nsu.fit.g17209.kokunin.task2.graphics;
+package ru.nsu.fit.g17209.kokunin.task2.view;
 
-import ru.nsu.fit.g17209.kokunin.task2.graphics.enumerations.GCellColor;
+import ru.nsu.fit.g17209.kokunin.task2.controller.Observer;
+import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GCellColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,10 +11,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class GBoard extends JPanel
-        implements MouseListener, ActionListener {
+        implements MouseListener, ActionListener /*mouse over*/ {
     private JButton[][] board;
 
-    public GBoard() {
+    public GBoard(Observer o) {
         super();
         board = new GCell[8][8];
         setLayout(new GridLayout(8,8));

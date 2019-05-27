@@ -1,8 +1,10 @@
 package ru.nsu.fit.g17209.kokunin.task2.model.player;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.board.Field;
-import ru.nsu.fit.g17209.kokunin.task2.model.board.PositionPair;
+import ru.nsu.fit.g17209.kokunin.task2.model.board.Turn;
+
+import java.awt.*;
 
 public interface Player {
-    public PositionPair decision(final Field table);
+    Point decision(final Field table);
 }

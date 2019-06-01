@@ -2,6 +2,7 @@ package ru.nsu.fit.g17209.kokunin.task2.model.board;
 
 import java.awt.*;
 
+@Deprecated
 public class Turn {
     Point origin;
     Point destination;

@@ -14,7 +14,7 @@ public class GBoard extends JPanel
         implements MouseListener, ActionListener /*mouse over*/ {
     private JButton[][] board;
 
-    public GBoard(Observer o) {
+    public GBoard() {
         super();
         board = new GCell[8][8];
         setLayout(new GridLayout(8,8));

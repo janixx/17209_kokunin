@@ -1,7 +1,7 @@
 package ru.nsu.fit.g17209.kokunin.task2.controller;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.Game;
-import ru.nsu.fit.g17209.kokunin.task2.model.board.Cell;
+import ru.nsu.fit.g17209.kokunin.task2.model.Cell;
 import ru.nsu.fit.g17209.kokunin.task2.view.MainWindow;
 
 import javax.swing.*;

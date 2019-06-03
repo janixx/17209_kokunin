@@ -6,13 +6,15 @@ import ru.nsu.fit.g17209.kokunin.task2.player.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Game {
     private static Logger log = LogManager.getLogger();
     enum Direction { UP, UPRIGHT, RIGHT, DOWNRIGHT, DOWN, DOWNLEFT, LEFT, UPLEFT }
     private boolean isPlaying = false;
     private boolean isFirstPlayerTurn = true;
-    //private State flag = State.NOBODY;
+    private ArrayList<Point> available1 = null;
+    private ArrayList<Point> available2 = null;
 
     /* Player1 always has white color, Player2 has black */
     private Player player1;
@@ -21,6 +23,16 @@ public class Game {
 
     public Game(Player p1, Player p2) {
         board = new Board();
+        available1 = new ArrayList<>(Arrays.asList(
+                new Point(Board.SIZE/2,Board.SIZE/2 - 2),
+                new Point(Board.SIZE/2 + 1,Board.SIZE/2 - 1),
+                new Point(Board.SIZE/2, Board.SIZE/2 + 1),
+                new Point(Board.SIZE/2 - 2, Board.SIZE/2)));
+        available2 = new ArrayList<>(Arrays.asList(
+                new Point(Board.SIZE/2 - 1,Board.SIZE/2 - 2),
+                new Point(Board.SIZE/2 + 1,Board.SIZE/2),
+                new Point(Board.SIZE/2, Board.SIZE/2 + 1),
+                new Point(Board.SIZE/2 - 2, Board.SIZE/2 - 1)));
         player1 = p1;
         player2 = p2;
         isPlaying = false;
@@ -34,9 +46,9 @@ public class Game {
     }
     
     /**
-     * This function watch neighbours
-     * of Cell that is located in point p
-     * of the board.
+     * This function watch neighbours of
+     * Cell that is located in point p of
+     * the board.
      * If any of eight neighbours Cells
      * has different color, function
      * retains the direction between
@@ -48,28 +60,28 @@ public class Game {
         CellFill currentColor = (isFirstPlayerTurn ? CellFill.WHITE : CellFill.BLACK );
         ArrayList<Direction> directions = new ArrayList<>(0);
         try {
-            if (( p.y > 0 ) && board.hasCellOtherColor(p.x, p.y - 1, currentColor)) {
+            if (( p.y > 0 ) && board.isCellAnotherColor(p.x, p.y - 1, currentColor)) {
                 directions.add(Direction.UP);
             }
-            if (( p.x < Board.SIZE - 1 && p.y > 0 ) && board.hasCellOtherColor(p.x + 1, p.y - 1, currentColor)) {
+            if (( p.x < Board.SIZE - 1 && p.y > 0 ) && board.isCellAnotherColor(p.x + 1, p.y - 1, currentColor)) {
                 directions.add(Direction.UPRIGHT);
             }
-            if (( p.x < Board.SIZE - 1 ) && board.hasCellOtherColor(p.x + 1, p.y, currentColor)) {
+            if (( p.x < Board.SIZE - 1 ) && board.isCellAnotherColor(p.x + 1, p.y, currentColor)) {
                 directions.add(Direction.RIGHT);
             }
-            if (( p.x < Board.SIZE - 1 && p.y < Board.SIZE - 1 ) && board.hasCellOtherColor(p.x + 1, p.y + 1, currentColor)) {
+            if (( p.x < Board.SIZE - 1 && p.y < Board.SIZE - 1 ) && board.isCellAnotherColor(p.x + 1, p.y + 1, currentColor)) {
                 directions.add(Direction.DOWNRIGHT);
             }
-            if (( p.y < Board.SIZE - 1 ) && board.hasCellOtherColor(p.x, p.y + 1, currentColor)) {
+            if (( p.y < Board.SIZE - 1 ) && board.isCellAnotherColor(p.x, p.y + 1, currentColor)) {
                 directions.add(Direction.DOWN);
             }
-            if (( p.x > 0 && p.y < Board.SIZE - 1 ) && board.hasCellOtherColor(p.x - 1, p.y + 1, currentColor)) {
+            if (( p.x > 0 && p.y < Board.SIZE - 1 ) && board.isCellAnotherColor(p.x - 1, p.y + 1, currentColor)) {
                 directions.add(Direction.DOWNLEFT);
             }
-            if (( p.x > 0 ) && board.hasCellOtherColor(p.x - 1, p.y, currentColor)) {
+            if (( p.x > 0 ) && board.isCellAnotherColor(p.x - 1, p.y, currentColor)) {
                 directions.add(Direction.LEFT);
             }
-            if (( p.x > 0 && p.y > 0 ) && board.hasCellOtherColor(p.x - 1, p.y - 1, currentColor)) {
+            if (( p.x > 0 && p.y > 0 ) && board.isCellAnotherColor(p.x - 1, p.y - 1, currentColor)) {
                 directions.add(Direction.UPLEFT);
             }
         }
@@ -121,25 +133,19 @@ public class Game {
         return (!board.isCellEmpty(p));
     }
 
-    private void checkDirection(Point p, Direction d) {
+    private boolean checkDirection(Point p, Direction d) {
         int startX = p.x, startY = p.y;
-        CellFill currentColor = (isFirstPlayerTurn ? CellFill.WHITE : CellFill.BLACK );
+        CellFill playerColor = (isFirstPlayerTurn ? CellFill.WHITE : CellFill.BLACK );
         
-        int counter = 0;
         boolean directionIsRelevant = false;
         try {
+            /* first shift to neighbour cell; it's have another cell */
+            movePointToDirection(p, d);
             while (movePointToDirection(p, d)) {
-                if (board.hasCellThisColor(p, currentColor)) {
+                if (board.isCellAnotherColor(p, playerColor)) {
                     directionIsRelevant = true;
                     break;
                 }
-                counter++;
-            }
-    
-            p.setLocation(startX, startY);
-            for (int i = 0; i < counter && directionIsRelevant; i++) {
-                movePointToDirection(p, d);
-                board.setCell(p, currentColor);
             }
         }
         catch(BoardException exc) {
@@ -148,21 +154,33 @@ public class Game {
             System.out.println("Throws exception forawhile " + d + " checking.");
         }
         p.setLocation(startX, startY);
+        return directionIsRelevant;
     }
-
+    
     private void treatTurn(Point p) {
-        /**
-         * variable, that contains number of neighbours cells with other color
-         * */
-        int counter = 0;
+        int startX = p.x, startY = p.y;
+        /* array that contains number of neighbours cells with other color */
         ArrayList<Direction> directions = calculateNeighbours(p);
         if (directions.isEmpty()) {
             System.out.println("TREAT TURN: ARRAY LIST IS EMPTY!!!");
         }
         for (Direction direction : directions) {
-            checkDirection(p, direction);
+            if (!checkDirection(p, direction)) {
+                directions.remove(direction);
+            }
         }
-        
+        CellFill current = (isFirstPlayerTurn ? CellFill.WHITE : CellFill.BLACK );
+        for (Direction direction : directions) {
+            try {
+                while (movePointToDirection(p, direction)) {
+                    board.setCell(p, current);
+                }
+            }
+            catch (BoardException exc) {
+                exc.printStackTrace();
+                System.out.println(exc.getMessage());
+            }
+        }
     }
 
 
@@ -174,7 +192,7 @@ public class Game {
         } else {
             point = player2.decision(board);
         }
-
+        
         treatTurn(point);
     }
 

@@ -2,34 +2,34 @@ package ru.nsu.fit.g17209.kokunin.task2.model;
 
 public class Cell {
     private boolean isEmpty;
-    private CellFill content;
+    private Color content;
 
     public Cell() {
         isEmpty = true;
-        content = CellFill.WHITE;
+        content = Color.WHITE;
     }
 
     public boolean reverseChip() {
         if (isEmpty) {
             return false;
         }
-        content = (content == CellFill.WHITE ? CellFill.BLACK : CellFill.WHITE);
+        content = (content == Color.WHITE ? Color.BLACK : Color.WHITE);
         return true;
     }
     
-    public void setColor(CellFill color) {
+    public void setColor(Color color) {
         isEmpty = false;
         content = color;
     }
 
     public void setWhite() {
         isEmpty = false;
-        content = CellFill.WHITE;
+        content = Color.WHITE;
     }
 
     public void setBlack() {
         isEmpty = false;
-        content = CellFill.BLACK;
+        content = Color.BLACK;
     }
 
     public void clear() {
@@ -38,17 +38,17 @@ public class Cell {
 
     public boolean isEmpty() { return isEmpty; }
 
-    public boolean isThisColor(CellFill color) {
+    public boolean isThisColor(Color color) {
         return (!isEmpty ? (content == color) : false);
     }
     
-    public boolean isOtherColor(CellFill color) { return (!isEmpty ? (content != color) : false); }
+    public boolean isAnotherColor(Color color) { return (!isEmpty ? (content != color) : false); }
 
     public boolean isWhite() {
-        return isThisColor(CellFill.WHITE);
+        return isThisColor(Color.WHITE);
     }
 
     public boolean isBlack() {
-        return isThisColor(CellFill.BLACK);
+        return isThisColor(Color.BLACK);
     }
 }

@@ -1,6 +1,7 @@
 package ru.nsu.fit.g17209.kokunin.task2.player;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
+import ru.nsu.fit.g17209.kokunin.task2.model.Color;
 
 import java.awt.*;
 
@@ -15,5 +16,5 @@ import java.awt.*;
  * */
 
 public interface Player {
-    Point decision(final Board table);
+    void move(final Board table, Color color);
 }

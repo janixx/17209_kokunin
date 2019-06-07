@@ -1,19 +1,16 @@
 package ru.nsu.fit.g17209.kokunin.task2.player;
 
-import ru.nsu.fit.g17209.kokunin.task2.model.CellFill;
+import ru.nsu.fit.g17209.kokunin.task2.model.Color;
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
 
 import java.awt.*;
 
 public class Computer implements Player {
-    Color color;
 
-    public Computer(Color c) {
-        color = c;
-    }
+    public Computer() {}
 
     @Override
-    public Point decision(final Board table) {
+    public void move(final Board table, Color color) {
         boolean flag = false;
         int maxScore = 0;
         Point origin = new Point(0,0),
@@ -25,10 +22,10 @@ public class Computer implements Player {
                 * */
             }
         }
-        return destination;
+        return;
     }
-
-    private boolean isMyColor(final CellFill cellFill) {
-        return ((color == Color.BLACK) ? (cellFill == CellFill.BLACK):(cellFill == CellFill.WHITE));
-    }
+/*
+    private boolean isMyColor(final Color color) {
+        return (( this.color == java.awt.Color.BLACK) ? ( color == Color.BLACK):( color == Color.WHITE));
+    }*/
 }

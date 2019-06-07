@@ -3,7 +3,7 @@ package ru.nsu.fit.g17209.kokunin.task2.view;
 import ru.nsu.fit.g17209.kokunin.task2.controller.Observer;
 import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GCellColor;
 import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GCellState;
-import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GPlayerColor;
+//import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GPlayerColor;
 import ru.nsu.fit.g17209.kokunin.task2.controller.Observable;
 
 import javax.swing.*;
@@ -22,7 +22,7 @@ public class GCell extends JButton
     private Observer observer;
     private final GCellColor color;
     private GCellState state;
-    private GPlayerColor player;
+    //private GPlayerColor player;
 
     public GCell(GCellColor color) {
         this.color = color;

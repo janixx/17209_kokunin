@@ -3,14 +3,14 @@ package ru.nsu.fit.g17209.kokunin.task2.view;
 import javax.swing.*;
 import java.awt.*;
 
-public class GSetPane extends JPanel {
+public class SetPane extends JPanel {
     public static final Dimension MIN_SIZE = new Dimension(160, 440);
     private JButton startButton;
     private JButton saveButton;
     private JButton loadButton;
     private JButton settingsButton;
 
-//    public GSetPane() {
+//    public SetPane() {
 //        super();
 //        setLayout(new FlowLayout());
 //        add(new JButton("A"));
@@ -22,7 +22,7 @@ public class GSetPane extends JPanel {
 //        setVisible(true);
 //    }
 
-    public GSetPane() {
+    public SetPane() {
         super();
         setLayout(new GridBagLayout());
         setAlignmentX(0.25f);

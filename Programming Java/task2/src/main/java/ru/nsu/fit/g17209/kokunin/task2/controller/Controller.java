@@ -12,8 +12,9 @@ public class Controller {
     private JFrame window;
     private Game model;
 
-    Controller() {
-        window = new MainWindow("Reversi Game");
+    Controller(Game game) {
+        
+        //window = new MainWindow(game.getBoard(), "Reversi Game");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //window.setResizable(true);
         window.setPreferredSize(new Dimension(640, 480));

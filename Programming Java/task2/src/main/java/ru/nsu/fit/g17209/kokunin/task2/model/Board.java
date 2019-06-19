@@ -1,10 +1,17 @@
 package ru.nsu.fit.g17209.kokunin.task2.model;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Board {
+public class Board implements ChangeListener{
+    @Override
+    public void stateChanged(ChangeEvent e) {
+    
+    }
+    
     public enum Direction { UP, UPRIGHT, RIGHT, DOWNRIGHT, DOWN, DOWNLEFT, LEFT, UPLEFT }
     public static final int SIZE = 8;
     
@@ -15,6 +22,12 @@ public class Board {
     
     public Board() {
         board = new Cell[SIZE][SIZE];
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                board[i][j] = new Cell();
+            }
+        }
+//        board[6][4].setWhite();
         board[SIZE/2 - 1][SIZE/2 - 1].setWhite();
         board[SIZE/2][SIZE/2].setWhite();
         board[SIZE/2 - 1][SIZE/2].setBlack();
@@ -24,11 +37,6 @@ public class Board {
         
         countBlack = 2;
         countWhite = 2;
-        /*for (Cell[] row : field) {
-            for (Cell cell : row) {
-                cell.clear();
-            }
-        }*/
     }
     
     class BoardController {
@@ -181,7 +189,7 @@ public class Board {
             return false;
         }
     
-        private void calculateAvailableMovies() {
+        private void calculateAvlblMvs() {
             ArrayList<Point> emptyCells = new ArrayList<>(0);
             for (int i = 0; i < SIZE; i++) {
                 for (int j = 0; j < SIZE; j++) {
@@ -230,9 +238,9 @@ public class Board {
         }
     }
     
-    public ArrayList<Point> getAvailableMovies(Color color) {
+    public ArrayList<Point> getAvlblMvs(Color color) {
         if (!controller.valid) {
-            controller.calculateAvailableMovies();
+            controller.calculateAvlblMvs();
         }
         
         if (color == Color.WHITE) {
@@ -242,13 +250,30 @@ public class Board {
         }
     }
     
-    public void move(Point p, Color color) {
-        ArrayList<Point> available = getAvailableMovies(color);
+    void move(Point p, Color color) {
+        ArrayList<Point> available = getAvlblMvs(color);
         if (!available.contains(p)) {
             String message = "Point " + p.x + p.y + " is not available for " + color + " player!";
             throw new IllegalArgumentException(message);
         }
         controller.treatMove(p, color);
+    }
+    
+    void clear() {
+        for (Cell[] row : board) {
+            for (Cell cell : row) {
+                cell.clear();
+            }
+        }
+        board[SIZE/2 - 1][SIZE/2 - 1].setWhite();
+        board[SIZE/2][SIZE/2].setWhite();
+        board[SIZE/2 - 1][SIZE/2].setBlack();
+        board[SIZE/2][SIZE/2 - 1].setBlack();
+        
+        controller = new BoardController();
+        
+        countBlack = 2;
+        countWhite = 2;
     }
     
     public boolean isThisColor(int x, int y, Color fill) throws IllegalArgumentException {
@@ -299,21 +324,14 @@ public class Board {
         return board[p.x][p.y].isBlack();
     }
     
-    void clear() {
-        for (Cell[] row : board) {
-            for (Cell cell : row) {
-                cell.clear();
+    public ArrayList<Point> getCells(Color color) {
+        ArrayList<Point> ret = new ArrayList<>(0);
+        for (int i = 0; i < Board.SIZE; i++) {
+            for (int j = 0; j < Board.SIZE; j++) {
+                if(isThisColor(i, j, color)) ret.add(new Point(i, j));
             }
         }
-        board[SIZE/2 - 1][SIZE/2 - 1].setWhite();
-        board[SIZE/2][SIZE/2].setWhite();
-        board[SIZE/2 - 1][SIZE/2].setBlack();
-        board[SIZE/2][SIZE/2 - 1].setBlack();
-        
-        controller = new BoardController();
-    
-        countBlack = 2;
-        countWhite = 2;
+        return ret;
     }
     
     public int getCountWhite() {

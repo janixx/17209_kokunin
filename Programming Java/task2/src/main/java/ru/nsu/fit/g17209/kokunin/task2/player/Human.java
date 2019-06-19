@@ -26,7 +26,7 @@ public class Human implements Player{
             y = scanner.nextInt();
         }
         
-        board.move(new Point(x,y), color);
+       // board.move(new Point(x,y), color);
 
         return;
     }

@@ -5,9 +5,9 @@ import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.g17209.kokunin.task2.player.Player;
 
 public class Game {
-    private static Logger log = LogManager.getLogger();
+    //private static Logger log = LogManager.getLogger();
     private boolean isPlaying = false;
-    private Color currentPlayer;
+    private Color curPlr;
 
     private Player whitePlayer;
     private Player blackPlayer;
@@ -20,33 +20,33 @@ public class Game {
         isPlaying = false;
     }
 
+    public Board getBoard() { return board; }
+    
     public boolean isGameOn() { return isPlaying; }
 
     public void startGame() {
         isPlaying = true;
-        currentPlayer = Color.BLACK;
+        curPlr = Color.BLACK;
     }
     
     public void nextTurn() {
-        if (currentPlayer == Color.WHITE) {
-            whitePlayer.move(board, Color.WHITE);
+        if (curPlr == Color.WHITE) {
+            whitePlayer.move(board, curPlr);
         } else {
-            blackPlayer.move(board, Color.BLACK);
+            blackPlayer.move(board, curPlr);
         }
         
-        boolean whiteHasMoves = !board.getAvailableMovies(Color.WHITE).isEmpty();
-        boolean blackHasMoves = !board.getAvailableMovies(Color.BLACK).isEmpty();
-        
-        currentPlayer =
-                (currentPlayer == Color.WHITE ?
-                        (blackHasMoves ? Color.BLACK : Color.WHITE) :
-                        (whiteHasMoves ? Color.WHITE : Color.BLACK));
-        
-        if (currentPlayer == Color.BLACK && !blackHasMoves ||
-                currentPlayer == Color.WHITE && !whiteHasMoves) {
-            
+        boolean whiteHasMoves = !board.getAvlblMvs(Color.WHITE).isEmpty();
+        boolean blackHasMoves = !board.getAvlblMvs(Color.BLACK).isEmpty();
+    
+        if (!blackHasMoves && !whiteHasMoves) {
             isPlaying = false;
+            return;
         }
+        
+        curPlr = (curPlr == Color.WHITE ?
+                        (blackHasMoves ? Color.BLACK : Color.WHITE)
+                        : (whiteHasMoves ? Color.WHITE : Color.BLACK));
     }
     
     /**

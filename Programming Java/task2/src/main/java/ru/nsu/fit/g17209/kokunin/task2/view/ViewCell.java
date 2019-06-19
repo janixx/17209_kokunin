@@ -1,19 +1,9 @@
 package ru.nsu.fit.g17209.kokunin.task2.view;
 
-import ru.nsu.fit.g17209.kokunin.task2.controller.Observer;
-import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GCellColor;
-import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GCellState;
-//import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GPlayerColor;
-import ru.nsu.fit.g17209.kokunin.task2.controller.Observable;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class ViewCell extends JButton
-        /*implements ActionListener, Observable*/ /*, MouseListener*//*!!!!!*/ {
-
+public class ViewCell extends JButton {
     public final static Color
             BLACK = new Color(68, 51, 40),
             WHITE = new Color(243,245, 197),
@@ -22,59 +12,44 @@ public class ViewCell extends JButton
             white = new ImageIcon("images/white.png"),
             black = new ImageIcon("images/black.png");
 
-    private Observer observer;
-    private final GCellColor color;
-    private GCellState state;
+
+    private boolean blocked;
     private boolean empty;
-    //private GPlayerColor player;
 
-    public ViewCell(GCellColor color) {
-        this.color = color;
-        if (color == GCellColor.BLACK) setBackground(BLACK);
-        else if (color == GCellColor.WHITE) setBackground(WHITE);
-        else if (color == GCellColor.GREEN) setBackground(GREEN);
-
-        this.state = GCellState.BLOCKED;
-        this.empty = true;
-
+    public ViewCell() {
+        blocked = true;
+        empty = true;
+        
+        setBackground(GREEN);
         setBorder(BorderFactory.createLineBorder(BLACK));
         setVisible(true);
+    }
+    
+    public boolean isBlocked() { return blocked; }
+    
+    void block(boolean value) {
+        blocked = value;
     }
     
     public boolean isEmpty() {
         return empty;
     }
     
-    public void setBlack() {
+    void setBlack() {
         empty = false;
         setIcon(black);
         repaint();
     }
     
-    public void setWhite() {
+    void setWhite() {
         empty = false;
         setIcon(white);
         repaint();
     }
     
-    public void clear() {
+    void clear() {
         empty = true;
         setIcon(null);
         repaint();
     }
-    
-   /* @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
-
-    @Override
-    public void registerObserver(Observer o) {
-        observer = o;
-    }
-
-    @Override
-    public void notifyObservers(Point pos) {
-        observer.notification(pos);
-    }*/
 }

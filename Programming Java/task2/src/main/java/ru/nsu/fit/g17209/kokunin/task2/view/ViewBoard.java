@@ -2,7 +2,6 @@ package ru.nsu.fit.g17209.kokunin.task2.view;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
 import ru.nsu.fit.g17209.kokunin.task2.model.Color;
-import ru.nsu.fit.g17209.kokunin.task2.view.enumerations.GCellColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +12,7 @@ import java.awt.event.MouseListener;
 import java.nio.channels.Pipe;
 import java.util.ArrayList;
 
-public class ViewBoard extends JPanel
-        implements MouseListener, ActionListener /*mouse over*/ {
+public class ViewBoard extends JPanel /*mouse over*/ {
     private ViewCell[][] field;
 
     public ViewBoard(Board board) {
@@ -23,11 +21,12 @@ public class ViewBoard extends JPanel
         setLayout(new GridLayout(Board.SIZE,Board.SIZE));
         for (int i = 0; i < Board.SIZE; i++) {
             for (int j = 0; j < Board.SIZE; j++) {
-                field[i][j] = new ViewCell(GCellColor.GREEN);
+                field[i][j] = new ViewCell();
                 add(field[i][j]);
+                //field[i][j].addMouseListener(boardListener);
             }
         }
-    
+        
         ArrayList<Point> cells = board.getCells(Color.BLACK);
         for (Point p : cells) {
             field[p.x][p.y].setBlack();
@@ -41,42 +40,13 @@ public class ViewBoard extends JPanel
 
         setVisible(true);
     }
-
+    
     @Override
-    public void mouseClicked(MouseEvent e) {
-        ViewCell cell = (ViewCell) e.getSource();
-        if (cell.isEmpty()) {
-            cell.setWhite();
-        } else {
-            cell.clear();
+    public synchronized void addMouseListener(MouseListener l) {
+        for (int i = 0; i < Board.SIZE; i++) {
+            for (int j = 0; j < Board.SIZE; j++) {
+                field[i][j].addMouseListener(l);
+            }
         }
-//        setVisible(false);
-        cell.repaint();
-        //this.repaint();
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
     }
 }

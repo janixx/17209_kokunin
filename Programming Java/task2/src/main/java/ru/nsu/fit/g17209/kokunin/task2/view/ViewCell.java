@@ -1,9 +1,15 @@
 package ru.nsu.fit.g17209.kokunin.task2.view;
 
-import javax.swing.*;
-import java.awt.*;
+import ru.nsu.fit.g17209.kokunin.task2.model.Cell;
 
-public class ViewCell extends JButton {
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+public class ViewCell extends JButton implements PropertyChangeListener {
     public final static Color
             BLACK = new Color(68, 51, 40),
             WHITE = new Color(243,245, 197),
@@ -51,5 +57,17 @@ public class ViewCell extends JButton {
         empty = true;
         setIcon(null);
         repaint();
+    }
+    
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        Cell cell = (Cell)evt.getSource();
+        if (cell.isEmpty()){
+            clear();
+        } else if (cell.isBlack()) {
+            setBlack();
+        } else {
+            setWhite();
+        }
     }
 }

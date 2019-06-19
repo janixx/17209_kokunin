@@ -10,7 +10,7 @@ public class Computer implements Player {
     public Computer() {}
 
     @Override
-    public void move(final Board table, Color color) {
+    public void move(final Board board, Color color) {
         boolean flag = false;
         int maxScore = 0;
         Point origin = new Point(0,0),

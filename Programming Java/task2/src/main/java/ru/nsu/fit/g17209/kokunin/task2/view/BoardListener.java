@@ -1,22 +1,20 @@
 package ru.nsu.fit.g17209.kokunin.task2.view;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
-import ru.nsu.fit.g17209.kokunin.task2.view.ViewBoard;
-import ru.nsu.fit.g17209.kokunin.task2.view.ViewCell;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class BoardListener implements MouseListener {
     private Board model;
-    private ViewBoard view;
+    //private ViewBoard view;
     
-    BoardListener(Board b, ViewBoard vb) {
+    BoardListener(Board b) {
         if (b == null) {
             throw new IllegalArgumentException("Got null link in BoardListener constructor");
         }
         model = b;
-        view = vb;
+        //view = vb;
     }
     
     @Override

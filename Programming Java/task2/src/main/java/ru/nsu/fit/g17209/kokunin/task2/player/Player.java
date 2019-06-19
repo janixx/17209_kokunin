@@ -16,5 +16,5 @@ import java.awt.*;
  * */
 
 public interface Player {
-    void move(final Board table, Color color);
+    void move(final Board board, Color color);
 }

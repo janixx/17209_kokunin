@@ -3,15 +3,11 @@ package ru.nsu.fit.g17209.kokunin.task2.model;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Board implements ChangeListener{
-    @Override
-    public void stateChanged(ChangeEvent e) {
-    
-    }
-    
+public class Board {
     public enum Direction { UP, UPRIGHT, RIGHT, DOWNRIGHT, DOWN, DOWNLEFT, LEFT, UPLEFT }
     public static final int SIZE = 8;
     
@@ -234,6 +230,14 @@ public class Board implements ChangeListener{
                 while (movePointToDirection(p, direction)) {
                     setCell(p, playerColor);
                 }
+            }
+        }
+    }
+    
+    public void addListeners(PropertyChangeListener[][] listeners) {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                board[i][j].addListener(listeners[i][j]);
             }
         }
     }

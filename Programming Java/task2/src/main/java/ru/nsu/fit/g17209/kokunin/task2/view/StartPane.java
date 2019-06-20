@@ -5,11 +5,11 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 class StartPane extends JPanel {
-    private JButton chooseButton;
-    private JButton quitButton;
+    private JButton startButton;
     private JButton loadButton;
+    private JButton quitButton;
     
-    StartPane(ActionListener choose, ActionListener quit, ActionListener load) {
+    StartPane(ActionListener choose, ActionListener load, ActionListener quit) {
         super();
         setLayout(new GridBagLayout());
         setAlignmentX(0.25f);
@@ -24,17 +24,17 @@ class StartPane extends JPanel {
         setVerifyInputWhenFocusTarget(true);
         putClientProperty("html.disable", Boolean.FALSE);
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-12307672)), null));
-        chooseButton = new JButton();
-        chooseButton.setBackground(new Color(-1052262));
-        chooseButton.setText("Choose opponent");
-        chooseButton.addActionListener(choose);
+        startButton = new JButton();
+        startButton.setBackground(new Color(-1052262));
+        startButton.setText("Start new game");
+        startButton.addActionListener(choose);
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        add(chooseButton, gbc);
+        add(startButton, gbc);
         loadButton = new JButton();
         loadButton.setBackground(new Color(-1052262));
         loadButton.setText("Load");

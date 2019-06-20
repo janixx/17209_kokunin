@@ -60,12 +60,12 @@ public class Board {
                 throw new IllegalArgumentException(message);
             }
             
-            valid = false;
-            
             if (board[p.x][p.y].isThisColor(fill)) {
                 return;
             }
-        
+    
+            valid = false;
+    
             if (board[p.x][p.y].isAnotherColor(fill)) {
                 if (board[p.x][p.y].isWhite()) {
                     countWhite--;
@@ -194,7 +194,8 @@ public class Board {
                     }
                 }
             }
-    
+            
+            //I can try to use operator new
             availableBlack.clear();
             availableWhite.clear();
             

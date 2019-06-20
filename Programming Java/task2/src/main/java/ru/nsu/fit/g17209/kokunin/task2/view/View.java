@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
 public class View {
-    private Board board;
+    //private Board board;
     
     private JFrame window;
     private ViewBoard viewBoard;
@@ -18,13 +18,13 @@ public class View {
     private ChoosePane choosePane;
     
     public View(Board b, MouseListener bl, ActionListener choose, ActionListener quit, ActionListener load) {
-        board = b;
+        //board = b;
         viewBoard = new ViewBoard(b);
         viewBoard.addMouseListener(bl);
         
         //controller = new ViewController(g.getBoard(), listener);
         setPane = new SetPane();
-        startPane = new StartPane(choose, quit, load);
+        startPane = new StartPane(choose, load, quit);
         choosePane = new ChoosePane();
         
         window = new Window();

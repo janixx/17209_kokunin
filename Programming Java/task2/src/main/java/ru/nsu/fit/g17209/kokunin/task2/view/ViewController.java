@@ -9,19 +9,20 @@ import java.awt.event.MouseListener;
 
 public class ViewController {
     private Game game;
+    private Board board;
     private View view;
     
     private MouseListener boardListener;
-    private ActionListener chooseButtonListener;
+    private ActionListener startButtonListener;
     private ActionListener loadButtonListener;
     private ActionListener quitButtonListener;
     private ActionListener computerButtonListener;
     private ActionListener humanButtonListener;
 //    private ActionListener ButtonListener;
     
-    public ViewController(Game g) {
-        boardListener = new BoardListener(g.getBoard());
-        chooseButtonListener = new ActionListener() {
+    public ViewController(Board board) {
+        boardListener = new BoardListener(board);
+        startButtonListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 view.choosePaneTop();
@@ -55,7 +56,7 @@ public class ViewController {
             
             }
         };
-        view = new View(g.getBoard(), boardListener, chooseButtonListener, quitButtonListener, loadButtonListener);
+        view = new View(board, boardListener, startButtonListener, quitButtonListener, loadButtonListener);
     }
     
     public void init() {
@@ -67,7 +68,7 @@ public class ViewController {
     }
     
     public ActionListener getChooseButtonListener() {
-        return chooseButtonListener;
+        return startButtonListener;
     }
     
     public ActionListener getLoadButtonListener() {

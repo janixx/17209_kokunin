@@ -2,6 +2,7 @@ package ru.nsu.fit.g17209.kokunin.task2.view;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -20,10 +21,12 @@ public class BoardListener implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         ViewCell cell = (ViewCell) e.getSource();
-        if (cell.isEmpty()) {
-            cell.setWhite();
-        } else {
-            cell.clear();
+        
+        int x = e.getX() / Board.SIZE;
+        int y = e.getY() / Board.SIZE;
+        Point p = new Point(x, y);
+        if (!model.isCellLocked(x,y)) {
+            model.move(p);
         }
         //cell.repaint();
     }
@@ -46,9 +49,6 @@ public class BoardListener implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
         ViewCell cell = (ViewCell) e.getSource();
-        if (cell.isBlocked()) {
-            return;
-        }
         
 //        cell
     }

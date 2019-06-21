@@ -23,7 +23,6 @@ public class ViewCell extends JButton implements PropertyChangeListener {
     private boolean empty;
 
     public ViewCell() {
-        blocked = true;
         empty = true;
         
         setBackground(GREEN);
@@ -31,24 +30,28 @@ public class ViewCell extends JButton implements PropertyChangeListener {
         setVisible(true);
     }
     
-    public boolean isBlocked() { return blocked; }
-    
-    void block(boolean value) {
-        blocked = value;
-    }
-    
     public boolean isEmpty() {
         return empty;
     }
     
+    public void setColor(ru.nsu.fit.g17209.kokunin.task2.model.Color color) {
+        if (color == ru.nsu.fit.g17209.kokunin.task2.model.Color.BLACK) {
+            setBlack();
+        } else {
+            setWhite();
+        }
+    }
+    
     void setBlack() {
         empty = false;
+        setDisabledIcon(black);
         setIcon(black);
         repaint();
     }
     
     void setWhite() {
         empty = false;
+        setDisabledIcon(white);
         setIcon(white);
         repaint();
     }
@@ -56,18 +59,24 @@ public class ViewCell extends JButton implements PropertyChangeListener {
     void clear() {
         empty = true;
         setIcon(null);
+        setDisabledIcon(null);
         repaint();
     }
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         Cell cell = (Cell)evt.getSource();
-        if (cell.isEmpty()){
-            clear();
-        } else if (cell.isBlack()) {
+    
+        if (cell.isBlack()) {
             setBlack();
-        } else {
+        } else if (cell.isWhite()) {
             setWhite();
+        }
+        
+        if (cell.isLocked()) {
+            setEnabled(false);
+        } else {
+            setEnabled(true);
         }
     }
 }

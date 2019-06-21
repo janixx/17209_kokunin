@@ -1,7 +1,6 @@
 package ru.nsu.fit.g17209.kokunin.task2.view;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
-import ru.nsu.fit.g17209.kokunin.task2.model.Game;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,8 +49,10 @@ public class View {
     }
     
     public void init() {
-        window.add(startPane, "Center");
-        window.setVisible(true);
+        window.add(viewBoard, "Center");
+        window.add(setPane, "West");
+//        window.add(startPane, "Center");
+//        window.setVisible(true);
         window.repaint();
     }
     

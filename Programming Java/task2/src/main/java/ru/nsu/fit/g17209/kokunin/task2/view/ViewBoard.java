@@ -1,18 +1,14 @@
 package ru.nsu.fit.g17209.kokunin.task2.view;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
-import ru.nsu.fit.g17209.kokunin.task2.model.Color;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.nio.channels.Pipe;
-import java.util.ArrayList;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-public class ViewBoard extends JPanel /*mouse over*/ {
+public class ViewBoard extends JPanel implements PropertyChangeListener {
     private ViewCell[][] field;
 
     public ViewBoard(Board board) {
@@ -23,18 +19,19 @@ public class ViewBoard extends JPanel /*mouse over*/ {
             for (int j = 0; j < Board.SIZE; j++) {
                 field[i][j] = new ViewCell();
                 add(field[i][j]);
-                //field[i][j].addMouseListener(boardListener);
             }
         }
         
-        ArrayList<Point> cells = board.getCells(Color.BLACK);
+        board.addCellListeners(field);
+        board.addBoardListener(this);
+        /*ArrayList<Point> cells = board.getCells(Color.BLACK);
         for (Point p : cells) {
             field[p.x][p.y].setBlack();
         }
         cells = board.getCells(Color.WHITE);
         for (Point p : cells) {
             field[p.x][p.y].setWhite();
-        }
+        }*/
         
         setSize(440, 440);
 
@@ -46,6 +43,22 @@ public class ViewBoard extends JPanel /*mouse over*/ {
         for (int i = 0; i < Board.SIZE; i++) {
             for (int j = 0; j < Board.SIZE; j++) {
                 field[i][j].addMouseListener(l);
+            }
+        }
+    }
+    
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        Board board = (Board)evt.getSource();
+        int flag = board.isGameFinish();
+        
+        for (int x = 0; x < Board.SIZE && flag >= 0; ++x) {
+            for (int y = 0; y < Board.SIZE; ++y) {
+                if (board.isCellLocked(x,y)) {
+                    field[x][y].setEnabled(false);
+                } else {
+                    field[x][y].setEnabled(true);
+                }
             }
         }
     }

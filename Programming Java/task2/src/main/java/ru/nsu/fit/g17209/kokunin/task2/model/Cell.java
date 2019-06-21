@@ -3,17 +3,20 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class Cell {
-    private boolean isEmpty;
+    private boolean empty;
+    private boolean locked;
     private Color content;
-    PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     public Cell() {
-        isEmpty = true;
+        empty = true;
+        locked = false;
         content = Color.WHITE;
     }
 
     public void addListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
+        support.firePropertyChange(null,null,null);
     }
     
     public void removeListener(PropertyChangeListener listener) {
@@ -21,48 +24,54 @@ public class Cell {
     }
     
     public boolean reverseChip() {
-        if (isEmpty) {
+        if (empty) {
             return false;
         }
         content = (content == Color.WHITE ? Color.BLACK : Color.WHITE);
-//        support.firePropertyChange("cellChanged", 0, content == Color.WHITE ? 1 : 2);
         support.firePropertyChange(null, null, null);
         return true;
     }
     
-    public void setColor(Color color) {
-        isEmpty = false;
+    public void setLocked(boolean flag) {
+        locked = flag;
+    }
+    
+    void setColor(Color color) {
+        empty = false;
+        locked = true;
         content = color;
         support.firePropertyChange(null, null, null);
     }
 
-    public void setWhite() {
-        isEmpty = false;
+    void setWhite() {
+        empty = false;
+        locked = true;
         content = Color.WHITE;
-//        support.firePropertyChange(new PropertyChangeEvent(this, null, null, null));
         support.firePropertyChange(null, null, null);
     }
 
-    public void setBlack() {
-        isEmpty = false;
+    void setBlack() {
+        empty = false;
+        locked = true;
         content = Color.BLACK;
-//        support.firePropertyChange("cellChanged", 0, 2);
         support.firePropertyChange(null, null, null);
     }
 
-    public void clear() {
-        isEmpty = true;
+    void clear() {
+        empty = true;
+        locked = true;
         support.firePropertyChange(null, null, null);
-//        support.firePropertyChange("cellChanged", 0, 0);
     }
 
-    public boolean isEmpty() { return isEmpty; }
+    public boolean isEmpty() { return empty; }
+    
+    public boolean isLocked() { return locked; }
 
     public boolean isThisColor(Color color) {
-        return (!isEmpty ? (content == color) : false);
+        return ( !empty && (content == color));
     }
     
-    public boolean isAnotherColor(Color color) { return (!isEmpty ? (content != color) : false); }
+    public boolean isAnotherColor(Color color) { return ( !empty && (content != color) ); }
 
     public boolean isWhite() {
         return isThisColor(Color.WHITE);

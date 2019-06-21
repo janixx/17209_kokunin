@@ -1,4 +1,4 @@
-package ru.nsu.fit.g17209.kokunin.task2.model;
+/*p*//*ackage ru.nsu.fit.g17209.kokunin.task2.model;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,7 @@ public class Game {
     public Board getBoard() { return board; }
     
     public boolean isGameOn() { return isPlaying; }
-
+    
     public void startGame() {
         isPlaying = true;
         curPlr = Color.BLACK;
@@ -49,12 +49,12 @@ public class Game {
                         : (whiteHasMoves ? Color.WHITE : Color.BLACK));
     }
     
-    /**
+*//*    *//**//**
      * Returns  -1 if game not finished
      *          0 if draw,
      *          1 if white won,
      *          2 if black won.\
-     */
+     *//**//*
     public int calculateResults() {
         if (isPlaying) return -1;
         
@@ -64,5 +64,6 @@ public class Game {
         return (whiteScore <= blackScore ?
                 (whiteScore == blackScore ? 0 : 2)
                 : 1);
-    }
+    }*//*
 }
+*/

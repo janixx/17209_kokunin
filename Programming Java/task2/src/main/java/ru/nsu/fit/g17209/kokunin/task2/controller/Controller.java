@@ -1,6 +1,7 @@
+/*
 package ru.nsu.fit.g17209.kokunin.task2.controller;
 
-import ru.nsu.fit.g17209.kokunin.task2.model.Game;
+//import ru.nsu.fit.g17209.kokunin.task2.model.Game;
 import ru.nsu.fit.g17209.kokunin.task2.model.Cell;
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ import java.awt.*;
 public class Controller {
     private Cell[][] board;
     private JFrame window;
-    private Game model;
+//    private Game model;
 
     Controller(Game game) {
         
@@ -22,3 +23,4 @@ public class Controller {
     }
 
 }
+*/

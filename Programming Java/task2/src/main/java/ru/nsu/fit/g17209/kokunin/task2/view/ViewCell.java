@@ -19,12 +19,13 @@ public class ViewCell extends JButton implements PropertyChangeListener {
             black = new ImageIcon("images/black.png");
 
 
-    private boolean blocked;
     private boolean empty;
+    private Point coordinates;
 
-    public ViewCell() {
+    public ViewCell(int x, int y) {
         empty = true;
         
+        coordinates = new Point(x,y);
         setBackground(GREEN);
         setBorder(BorderFactory.createLineBorder(BLACK));
         setVisible(true);
@@ -32,6 +33,10 @@ public class ViewCell extends JButton implements PropertyChangeListener {
     
     public boolean isEmpty() {
         return empty;
+    }
+    
+    public Point getLocationOnBoard(){
+        return coordinates;
     }
     
     public void setColor(ru.nsu.fit.g17209.kokunin.task2.model.Color color) {
@@ -61,6 +66,20 @@ public class ViewCell extends JButton implements PropertyChangeListener {
         setIcon(null);
         setDisabledIcon(null);
         repaint();
+    }
+    
+    @Override
+    public void setEnabled(boolean b) {
+        if (!b && model.isRollover()) {
+            model.setRollover(false);
+        }
+        super.setEnabled(b);
+        if (b = true) {
+            setBackground(GREEN);
+        } else {
+            setBackground(WHITE);
+        }
+        model.setEnabled(b);
     }
     
     @Override

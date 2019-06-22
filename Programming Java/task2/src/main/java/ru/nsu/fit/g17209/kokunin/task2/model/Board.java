@@ -250,25 +250,25 @@ public class Board {
                 System.out.println("TREAT TURN: ARRAY LIST IS EMPTY!!!");
             }
             for (int i = 0; i < directions.size(); i++) {
-                if (!checkDirection(p, directions.get(i), player)) {
+                if (checkDirection(p, directions.get(i), player)) {
                     available.add(directions.get(i));
                 }
             }
             for (Direction direction : available) {
-                while (movePointToDirection(p, direction)) {
+                do {
                     setCell(p, player);
-                }
+                } while (movePointToDirection(p, direction));
             }
             
             Color opponent = (player == Color.WHITE ? Color.BLACK : Color.WHITE);
             calculateAvlblMvs(opponent);
             
-            boolean opponentHasMovies = (opponent == Color.WHITE && availableWhite <= 0) ||
-                    (opponent == Color.BLACK && availableBlack <= 0);
+            boolean opponentHasMovies = (opponent == Color.WHITE && availableWhite >= 0) ||
+                    (opponent == Color.BLACK && availableBlack >= 0);
             if (!opponentHasMovies) {
                 calculateAvlblMvs(player);
-                boolean playerHasMoves = (player == Color.WHITE && availableWhite <= 0) ||
-                        (player == Color.BLACK && availableBlack <= 0);
+                boolean playerHasMoves = (player == Color.WHITE && availableWhite >= 0) ||
+                        (player == Color.BLACK && availableBlack >= 0);
                 if (!playerHasMoves) {
                     isPlaying = false;
                 }
@@ -285,8 +285,8 @@ public class Board {
     }
     
     public void addCellListeners(PropertyChangeListener[][] listeners) {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
+        for (int j = 0; j < SIZE; j++) {
+            for (int i = 0; i < SIZE; i++) {
                 board[i][j].addListener(listeners[i][j]);
                 board[i][j].reverseChip();
                 board[i][j].reverseChip();
@@ -352,28 +352,28 @@ public class Board {
                 (controller.countWhite == controller.countBlack ? 0 : 2) : 1);
     }
     
-    public boolean isThisColor(int x, int y, Color fill) throws IllegalArgumentException {
+    public boolean isThisColor(int x, int y, Color color) throws IllegalArgumentException {
         if (x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0) {
             String message = "Uncorrected coordinate:" + x + y;
             throw new IllegalArgumentException(message);
         }
-        return board[x][y].isThisColor(fill);
+        return board[x][y].isThisColor(color);
     }
     
-    public boolean isThisColor(Point p, Color fill) throws IllegalArgumentException {
-        return isThisColor(p.x, p.y, fill);
+    public boolean isThisColor(Point p, Color color) throws IllegalArgumentException {
+        return isThisColor(p.x, p.y, color);
     }
     
-    public boolean isAnotherColor(int x, int y, Color fill) throws IllegalArgumentException {
+    public boolean isAnotherColor(int x, int y, Color color) throws IllegalArgumentException {
         if (x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0) {
             String message = "Uncorrected coordinate:" + x + y;
             throw new IllegalArgumentException(message);
         }
-        return board[x][y].isAnotherColor(fill);
+        return board[x][y].isAnotherColor(color);
     }
     
-    public boolean isAnotherColor(Point p, Color fill) throws IllegalArgumentException {
-        return isAnotherColor(p.x, p.y, fill);
+    public boolean isAnotherColor(Point p, Color color) throws IllegalArgumentException {
+        return isAnotherColor(p.x, p.y, color);
     }
     
     public boolean isCellWhite(Point p) throws IllegalArgumentException {
@@ -397,7 +397,7 @@ public class Board {
             String message = "Uncorrected coordinate:" + p.x + p.y;
             throw new IllegalArgumentException(message);
         }
-        return board[p.x][p.y].isBlack();
+        return board[p.x][p.y].isEmpty();
     }
     
     public boolean isCellLocked(int x, int y) throws IllegalArgumentException {

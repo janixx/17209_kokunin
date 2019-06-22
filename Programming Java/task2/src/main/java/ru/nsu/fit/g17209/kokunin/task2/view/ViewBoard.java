@@ -15,9 +15,9 @@ public class ViewBoard extends JPanel implements PropertyChangeListener {
         super();
         field = new ViewCell[Board.SIZE][Board.SIZE];
         setLayout(new GridLayout(Board.SIZE,Board.SIZE));
-        for (int i = 0; i < Board.SIZE; i++) {
-            for (int j = 0; j < Board.SIZE; j++) {
-                field[i][j] = new ViewCell();
+        for (int j = 0; j < Board.SIZE; j++) {
+            for (int i = 0; i < Board.SIZE; i++) {
+                field[i][j] = new ViewCell(i, j);
                 add(field[i][j]);
             }
         }
@@ -40,8 +40,8 @@ public class ViewBoard extends JPanel implements PropertyChangeListener {
     
     @Override
     public synchronized void addMouseListener(MouseListener l) {
-        for (int i = 0; i < Board.SIZE; i++) {
-            for (int j = 0; j < Board.SIZE; j++) {
+        for (int j = 0; j < Board.SIZE; j++) {
+            for (int i = 0; i < Board.SIZE; i++) {
                 field[i][j].addMouseListener(l);
             }
         }
@@ -52,8 +52,8 @@ public class ViewBoard extends JPanel implements PropertyChangeListener {
         Board board = (Board)evt.getSource();
         int flag = board.isGameFinish();
         
-        for (int x = 0; x < Board.SIZE && flag >= 0; ++x) {
-            for (int y = 0; y < Board.SIZE; ++y) {
+        for (int y = 0; y < Board.SIZE && flag < 0; ++y) {
+            for (int x = 0; x < Board.SIZE; ++x) {
                 if (board.isCellLocked(x,y)) {
                     field[x][y].setEnabled(false);
                 } else {

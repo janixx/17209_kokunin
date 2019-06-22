@@ -21,14 +21,10 @@ public class BoardListener implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         ViewCell cell = (ViewCell) e.getSource();
-        
-        int x = e.getX() / Board.SIZE;
-        int y = e.getY() / Board.SIZE;
-        Point p = new Point(x, y);
-        if (!model.isCellLocked(x,y)) {
+        Point p = cell.getLocationOnBoard();
+        if (!model.isCellLocked(p.x,p.y)) {
             model.move(p);
         }
-        //cell.repaint();
     }
     
     @Override
@@ -48,8 +44,6 @@ public class BoardListener implements MouseListener {
     
     @Override
     public void mouseExited(MouseEvent e) {
-        ViewCell cell = (ViewCell) e.getSource();
-        
-//        cell
+    
     }
 }

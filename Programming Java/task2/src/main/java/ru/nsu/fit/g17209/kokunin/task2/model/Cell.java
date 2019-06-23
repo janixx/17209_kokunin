@@ -10,7 +10,7 @@ public class Cell {
 
     public Cell() {
         empty = true;
-        locked = false;
+        locked = true;
         content = Color.WHITE;
     }
 
@@ -23,17 +23,18 @@ public class Cell {
         support.removePropertyChangeListener(listener);
     }
     
-    public boolean reverseChip() {
+    /*public boolean reverseChip() {
         if (empty) {
             return false;
         }
         content = (content == Color.WHITE ? Color.BLACK : Color.WHITE);
         support.firePropertyChange(null, null, null);
         return true;
-    }
+    }*/
     
     public void setLocked(boolean flag) {
         locked = flag;
+        support.firePropertyChange(null, null, null);
     }
     
     void setColor(Color color) {
@@ -71,7 +72,9 @@ public class Cell {
         return ( !empty && (content == color));
     }
     
-    public boolean isAnotherColor(Color color) { return ( !empty && (content != color) ); }
+    public boolean isAnotherColor(Color color) {
+        return ( !empty && (content != color) );
+    }
 
     public boolean isWhite() {
         return isThisColor(Color.WHITE);

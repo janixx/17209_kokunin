@@ -46,27 +46,11 @@ public class Board {
             countBlack = 2;
             player = Color.BLACK;
             availableWhite = availableBlack = 4;
-            //calculateAvlblMvs(player);
             valid = true;
-                    /*new ArrayList<>(Arrays.asList(
-                    new Point(Board.SIZE / 2, Board.SIZE / 2 - 2),
-                    new Point(Board.SIZE / 2 + 1, Board.SIZE / 2 - 1),
-                    new Point(Board.SIZE / 2, Board.SIZE / 2 + 1),
-                    new Point(Board.SIZE / 2 - 2, Board.SIZE / 2)));*/
-//            board[Board.SIZE/2][Board.SIZE/2 - 2].setAvailableWhite(true);
-//            board[Board.SIZE/2 + 1][Board.SIZE/2 - 1].setAvailableWhite(true);
-//            board[Board.SIZE/2][Board.SIZE/2 + 1].setAvailableWhite(true);
-//            board[Board.SIZE/2 - 2][Board.SIZE/2].setAvailableWhite(true);
-            
-            /*availableBlack *//*= new ArrayList<>(Arrays.asList(
-                    new Point(Board.SIZE / 2 - 1, Board.SIZE / 2 - 2),
-                    new Point(Board.SIZE / 2 + 1, Board.SIZE / 2),
-                    new Point(Board.SIZE / 2, Board.SIZE / 2 + 1),
-                    new Point(Board.SIZE / 2 - 2, Board.SIZE / 2 - 1)));*/
-            board[Board.SIZE/2 - 1][Board.SIZE/2 - 2].setLocked(false);
-            board[Board.SIZE/2 + 1][Board.SIZE/2].setLocked(false);
-            board[Board.SIZE/2][Board.SIZE/2 + 1].setLocked(false);
-            board[Board.SIZE/2 - 2][Board.SIZE/2 - 1].setLocked(false);
+            board[Board.SIZE / 2 - 1][Board.SIZE / 2 - 2].setLocked(false);
+            board[Board.SIZE / 2 + 1][Board.SIZE / 2].setLocked(false);
+            board[Board.SIZE / 2][Board.SIZE / 2 + 1].setLocked(false);
+            board[Board.SIZE / 2 - 2][Board.SIZE / 2 - 1].setLocked(false);
         }
     
         private void setCell(Point p, Color fill) throws IllegalArgumentException {
@@ -135,13 +119,13 @@ public class Board {
             }
             return directions;
         }
-        
-            /**
-             * This function CHANGE the location of
-             * the point that we put in arguments.
-             * Returns false if Cell is empty or
-             * locate outside the board.
-             */
+    
+        /**
+         * This function CHANGE the location of
+         * the point that we put in arguments.
+         * Returns false if Cell is empty or
+         * locate outside the board.
+         */
         private boolean movePointToDirection(Point p, Direction d) {
             if (p.x <= 0 || p.y <= 0 || p.x >= Board.SIZE - 1 || p.y >= Board.SIZE - 1) {
                 return false;
@@ -202,12 +186,12 @@ public class Board {
     
         private void calculateAvlblMvs(Color color) {
             int counter = 0;
-            Point p = new Point(0,0);
+            Point p = new Point(0, 0);
             for (int x = 0; x < SIZE; x++) {
                 for (int y = 0; y < SIZE; y++) {
                     Cell cell = board[x][y];
                     if (cell.isEmpty()) {
-                        p.setLocation(x,y);
+                        p.setLocation(x, y);
                         ArrayList<Direction> available = calculateNeighbours(p, color);
                         if (available.isEmpty()) continue;
     
@@ -217,6 +201,8 @@ public class Board {
                         } else {
                             cell.setLocked(true);
                         }
+                    } else {
+                        cell.setLocked(true);
                     }
                 }
             }
@@ -226,23 +212,11 @@ public class Board {
             } else {
                 availableWhite = counter;
             }
-            //I can try to use operator new
-//            availableBlack.clear();
-//            availableWhite.clear();
-            /*
-            for (Point cell : emptyCells) {
-                ArrayList<Direction> available = calculateNeighbours(cell, player);
-                if (available.isEmpty()) continue;
-    
-                if (checkAllDirections(cell, available, player)) {
-                    board[cell.x][cell.y].setLocked(false);
-                }
-            }
-            */
         }
         
         private void treatMove(Point p) {
-//            int startX = p.x, startY = p.y;
+            int startX = p.x, startY = p.y;
+    
             /* array that contains number of neighbours cells with other color */
             ArrayList<Direction> directions = calculateNeighbours(p, player);
             ArrayList<Direction> available = new ArrayList<>(0);
@@ -254,21 +228,27 @@ public class Board {
                     available.add(directions.get(i));
                 }
             }
-            for (Direction direction : available) {
-                do {
-                    setCell(p, player);
-                } while (movePointToDirection(p, direction));
+            //TO DO -- FIX, MAKE MORE BEAUTY
+            if (!available.isEmpty()) {
+                setCell(p, player);
             }
             
-            Color opponent = (player == Color.WHITE ? Color.BLACK : Color.WHITE);
+            for (int i = 0; i < available.size(); i++) {
+                while (movePointToDirection(p, available.get(i)) && isAnotherColor(p, player)) {
+                    setCell(p, player);
+                }
+                p.setLocation(startX, startY);
+            }
+            
+            Color opponent = ( player == Color.WHITE ? Color.BLACK : Color.WHITE );
             calculateAvlblMvs(opponent);
             
-            boolean opponentHasMovies = (opponent == Color.WHITE && availableWhite >= 0) ||
-                    (opponent == Color.BLACK && availableBlack >= 0);
+            boolean opponentHasMovies = ( opponent == Color.WHITE && availableWhite >= 0 ) ||
+                    ( opponent == Color.BLACK && availableBlack >= 0 );
             if (!opponentHasMovies) {
                 calculateAvlblMvs(player);
-                boolean playerHasMoves = (player == Color.WHITE && availableWhite >= 0) ||
-                        (player == Color.BLACK && availableBlack >= 0);
+                boolean playerHasMoves = ( player == Color.WHITE && availableWhite >= 0 ) ||
+                        ( player == Color.BLACK && availableBlack >= 0 );
                 if (!playerHasMoves) {
                     isPlaying = false;
                 }
@@ -276,6 +256,13 @@ public class Board {
                 player = opponent;
             }
             support.firePropertyChange("blocked", null, null);
+        }
+    }
+    
+    private void checkPoint(int x, int y) throws IllegalArgumentException {
+        if (x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0) {
+            String message = "Uncorrected coordinate:" + x + y;
+            throw new IllegalArgumentException(message);
         }
     }
     
@@ -288,23 +275,9 @@ public class Board {
         for (int j = 0; j < SIZE; j++) {
             for (int i = 0; i < SIZE; i++) {
                 board[i][j].addListener(listeners[i][j]);
-                board[i][j].reverseChip();
-                board[i][j].reverseChip();
             }
         }
     }
-    
-    /*public ArrayList<Point> getAvlblMvs(Color color) {
-        if (!controller.valid) {
-            controller.calculateAvlblMvs();
-        }
-        
-        if (color == Color.WHITE) {
-            return controller.availableWhite;
-        } else {
-            return controller.availableBlack;
-        }
-    }*/
     
     public void move(Point p) throws IllegalArgumentException {
         if (board[p.x][p.y].isLocked()) {
@@ -331,9 +304,6 @@ public class Board {
         board[SIZE / 2][SIZE / 2 - 1].setBlack();
         
         controller = new BoardController();
-
-//        countBlack = 2;
-//        countWhite = 2;
     }
     
     /***
@@ -348,15 +318,12 @@ public class Board {
             return -1;
         }
         
-        return(controller.countWhite <= controller.countBlack ?
-                (controller.countWhite == controller.countBlack ? 0 : 2) : 1);
+        return ( controller.countWhite <= controller.countBlack ?
+                ( controller.countWhite == controller.countBlack ? 0 : 2 ) : 1 );
     }
     
     public boolean isThisColor(int x, int y, Color color) throws IllegalArgumentException {
-        if (x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0) {
-            String message = "Uncorrected coordinate:" + x + y;
-            throw new IllegalArgumentException(message);
-        }
+        checkPoint(x, y);
         return board[x][y].isThisColor(color);
     }
     
@@ -365,10 +332,7 @@ public class Board {
     }
     
     public boolean isAnotherColor(int x, int y, Color color) throws IllegalArgumentException {
-        if (x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0) {
-            String message = "Uncorrected coordinate:" + x + y;
-            throw new IllegalArgumentException(message);
-        }
+        checkPoint(x, y);
         return board[x][y].isAnotherColor(color);
     }
     
@@ -377,56 +341,26 @@ public class Board {
     }
     
     public boolean isCellWhite(Point p) throws IllegalArgumentException {
-        if (p.x > SIZE - 1 || p.y > SIZE - 1 || p.x < 0 || p.y < 0) {
-            String message = "Uncorrected coordinate:" + p.x + p.y;
-            throw new IllegalArgumentException(message);
-        }
+        checkPoint(p.x, p.y);
         return board[p.x][p.y].isWhite();
     }
     
     public boolean isCellBlack(Point p) throws IllegalArgumentException {
-        if (p.x > SIZE - 1 || p.y > SIZE - 1 || p.x < 0 || p.y < 0) {
-            String message = "Uncorrected coordinate:" + p.x + p.y;
-            throw new IllegalArgumentException(message);
-        }
+        checkPoint(p.x, p.y);
         return board[p.x][p.y].isBlack();
     }
     
     public boolean isCellEmpty(Point p) throws IllegalArgumentException {
-        if (p.x > SIZE - 1 || p.y > SIZE - 1 || p.x < 0 || p.y < 0) {
-            String message = "Uncorrected coordinate:" + p.x + p.y;
-            throw new IllegalArgumentException(message);
-        }
+        checkPoint(p.x, p.y);
         return board[p.x][p.y].isEmpty();
     }
     
     public boolean isCellLocked(int x, int y) throws IllegalArgumentException {
-        if (x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0) {
-            String message = "Uncorrected coordinate:" + x + y;
-            System.out.println(message);
-            throw new IllegalArgumentException(message);
-        }
+        checkPoint(x, y);
         return board[x][y].isLocked();
     }
     
     public Color getPlayerColor() {
         return controller.player;
     }
-    /*public ArrayList<Point> getCells(Color color) {
-        ArrayList<Point> ret = new ArrayList<>(0);
-        for (int i = 0; i < Board.SIZE; i++) {
-            for (int j = 0; j < Board.SIZE; j++) {
-                if(isThisColor(i, j, color)) ret.add(new Point(i, j));
-            }
-        }
-        return ret;
-    }*/
-    
-//    public int getCountWhite() {
-//        return countWhite;
-//    }
-    
-//    public int getCountBlack() {
-//        return countBlack;
-//    }
 }

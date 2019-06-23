@@ -68,7 +68,7 @@ public class ViewCell extends JButton implements PropertyChangeListener {
         repaint();
     }
     
-    @Override
+/*    @Override
     public void setEnabled(boolean b) {
         if (!b && model.isRollover()) {
             model.setRollover(false);
@@ -80,7 +80,7 @@ public class ViewCell extends JButton implements PropertyChangeListener {
             setBackground(WHITE);
         }
         model.setEnabled(b);
-    }
+    }*/
     
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
@@ -93,9 +93,9 @@ public class ViewCell extends JButton implements PropertyChangeListener {
         }
         
         if (cell.isLocked()) {
-            setEnabled(false);
+            this.setEnabled(false);
         } else {
-            setEnabled(true);
+            this.setEnabled(true);
         }
     }
 }

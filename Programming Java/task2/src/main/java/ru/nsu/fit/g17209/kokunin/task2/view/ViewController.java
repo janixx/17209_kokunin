@@ -1,14 +1,12 @@
 package ru.nsu.fit.g17209.kokunin.task2.view;
 
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
-//import ru.nsu.fit.g17209.kokunin.task2.model.Game;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
 public class ViewController {
-//    private Game game;
     private Board board;
     private View view;
     

@@ -9,6 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class ViewBoard extends JPanel implements PropertyChangeListener {
+    private static final Dimension size = new Dimension(440, 440);
     private ViewCell[][] field;
 
     public ViewBoard(Board board) {
@@ -24,17 +25,10 @@ public class ViewBoard extends JPanel implements PropertyChangeListener {
         
         board.addCellListeners(field);
         board.addBoardListener(this);
-        /*ArrayList<Point> cells = board.getCells(Color.BLACK);
-        for (Point p : cells) {
-            field[p.x][p.y].setBlack();
-        }
-        cells = board.getCells(Color.WHITE);
-        for (Point p : cells) {
-            field[p.x][p.y].setWhite();
-        }*/
         
-        setSize(440, 440);
-
+        setPreferredSize(size);
+        setMaximumSize(size);
+        
         setVisible(true);
     }
     

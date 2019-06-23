@@ -23,15 +23,6 @@ public class Cell {
         support.removePropertyChangeListener(listener);
     }
     
-    /*public boolean reverseChip() {
-        if (empty) {
-            return false;
-        }
-        content = (content == Color.WHITE ? Color.BLACK : Color.WHITE);
-        support.firePropertyChange(null, null, null);
-        return true;
-    }*/
-    
     public void setLocked(boolean flag) {
         locked = flag;
         support.firePropertyChange(null, null, null);

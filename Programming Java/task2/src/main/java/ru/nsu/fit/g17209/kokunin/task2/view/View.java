@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
 public class View {
-    //private Board board;
-    
     private JFrame window;
     private ViewBoard viewBoard;
     private SetPane setPane;

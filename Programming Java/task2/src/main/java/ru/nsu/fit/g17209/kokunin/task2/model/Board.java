@@ -4,7 +4,6 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Board {
     public enum Direction {UP, UPRIGHT, RIGHT, DOWNRIGHT, DOWN, DOWNLEFT, LEFT, UPLEFT}
@@ -54,7 +53,7 @@ public class Board {
         }
     
         private void setCell(Point p, Color fill) throws IllegalArgumentException {
-            if (p.x > SIZE - 1 || p.y > SIZE - 1 || p.x < 0 || p.y < 0) {
+            if (!isCellOnBoard(p.x, p.y)) {
                 String message = "Uncorrected coordinate:" + p.x + p.y;
                 throw new IllegalArgumentException(message);
             }
@@ -127,7 +126,7 @@ public class Board {
          * locate outside the board.
          */
         private boolean movePointToDirection(Point p, Direction d) {
-            if (p.x <= 0 || p.y <= 0 || p.x >= Board.SIZE - 1 || p.y >= Board.SIZE - 1) {
+            if (!isCellOnBoard(p.x, p.y)) {
                 return false;
             }
             switch (d) {
@@ -156,17 +155,17 @@ public class Board {
                     p.move(p.x - 1, p.y - 1);
                     break;
             }
-            return ( !isCellEmpty(p) );
+            return ( isCellOnBoard(p.x, p.y) && !isCellEmpty(p) );
         }
     
-        private boolean checkDirection(Point p, Direction d, Color playerColor) {
+        private boolean checkDirection(Point p, Direction d, Color color) {
             int startX = p.x, startY = p.y;
             boolean directionIsRelevant = false;
         
             /* first shift to neighbour cell; it's have another cell */
             movePointToDirection(p, d);
             while (movePointToDirection(p, d)) {
-                if (isThisColor(p, playerColor)) {
+                if (isThisColor(p, color)) {
                     directionIsRelevant = true;
                     break;
                 }
@@ -175,9 +174,9 @@ public class Board {
             return directionIsRelevant;
         }
     
-        private boolean checkAllDirections(Point p, ArrayList<Direction> directions, Color playerColor) {
+        private boolean checkAllDirections(Point p, ArrayList<Direction> directions, Color color) {
             for (int i = 0; i < directions.size(); i++) {
-                if (checkDirection(p, directions.get(i), playerColor)) {
+                if (checkDirection(p, directions.get(i), color)) {
                     return true;
                 }
             }
@@ -186,14 +185,20 @@ public class Board {
     
         private void calculateAvlblMvs(Color color) {
             int counter = 0;
+            Cell cell = null;
             Point p = new Point(0, 0);
+            ArrayList<Direction> available = null;
+            
             for (int x = 0; x < SIZE; x++) {
                 for (int y = 0; y < SIZE; y++) {
-                    Cell cell = board[x][y];
+                    cell = board[x][y];
                     if (cell.isEmpty()) {
                         p.setLocation(x, y);
-                        ArrayList<Direction> available = calculateNeighbours(p, color);
-                        if (available.isEmpty()) continue;
+                        available = calculateNeighbours(p, color);
+                        if (available.isEmpty()) {
+                            cell.setLocked(true);
+                            continue;
+                        }
     
                         if (checkAllDirections(p, available, color)) {
                             cell.setLocked(false);
@@ -201,8 +206,6 @@ public class Board {
                         } else {
                             cell.setLocked(true);
                         }
-                    } else {
-                        cell.setLocked(true);
                     }
                 }
             }
@@ -228,11 +231,11 @@ public class Board {
                     available.add(directions.get(i));
                 }
             }
+            
             //TO DO -- FIX, MAKE MORE BEAUTY
             if (!available.isEmpty()) {
                 setCell(p, player);
             }
-            
             for (int i = 0; i < available.size(); i++) {
                 while (movePointToDirection(p, available.get(i)) && isAnotherColor(p, player)) {
                     setCell(p, player);
@@ -243,16 +246,20 @@ public class Board {
             Color opponent = ( player == Color.WHITE ? Color.BLACK : Color.WHITE );
             calculateAvlblMvs(opponent);
             
-            boolean opponentHasMovies = ( opponent == Color.WHITE && availableWhite >= 0 ) ||
-                    ( opponent == Color.BLACK && availableBlack >= 0 );
+            boolean opponentHasMovies = ( opponent == Color.WHITE && availableWhite > 0 ) ||
+                    ( opponent == Color.BLACK && availableBlack > 0 );
             if (!opponentHasMovies) {
                 calculateAvlblMvs(player);
-                boolean playerHasMoves = ( player == Color.WHITE && availableWhite >= 0 ) ||
-                        ( player == Color.BLACK && availableBlack >= 0 );
+                boolean playerHasMoves = ( player == Color.WHITE && availableWhite > 0 ) ||
+                        ( player == Color.BLACK && availableBlack > 0 );
+                System.out.println("OPYAT' YA HODIT' BUDU????");
+    
                 if (!playerHasMoves) {
                     isPlaying = false;
+                    System.out.println("GAME VSYO, FINISH!!!");
                 }
             } else {
+                System.out.println("OTDAJU HOD :(");
                 player = opponent;
             }
             support.firePropertyChange("blocked", null, null);
@@ -260,10 +267,14 @@ public class Board {
     }
     
     private void checkPoint(int x, int y) throws IllegalArgumentException {
-        if (x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0) {
-            String message = "Uncorrected coordinate:" + x + y;
+        if (!isCellOnBoard(x,y)) {
+            String message = "Uncorrected coordinate: " + x + " " + y;
             throw new IllegalArgumentException(message);
         }
+    }
+    
+    private boolean isCellOnBoard(int x, int y) {
+        return !(x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0);
     }
     
     public void addBoardListener(PropertyChangeListener listener) {

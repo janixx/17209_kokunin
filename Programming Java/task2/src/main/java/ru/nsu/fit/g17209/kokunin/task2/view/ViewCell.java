@@ -3,8 +3,7 @@ package ru.nsu.fit.g17209.kokunin.task2.view;
 import ru.nsu.fit.g17209.kokunin.task2.model.Cell;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -13,10 +12,14 @@ public class ViewCell extends JButton implements PropertyChangeListener {
     public final static Color
             BLACK = new Color(68, 51, 40),
             WHITE = new Color(243,245, 197),
-            GREEN = new Color(10, 145, 4);
+            GREEN = new Color(21, 141, 60),
+            YELLOW = new Color(0xE7FBEE37, true);
     private final static ImageIcon
             white = new ImageIcon("images/white.png"),
             black = new ImageIcon("images/black.png");
+    private final static Border
+            standard = BorderFactory.createLineBorder(Color.BLACK),
+            active = BorderFactory.createLineBorder(Color.YELLOW, 2);
 
 
     private boolean empty;
@@ -27,7 +30,7 @@ public class ViewCell extends JButton implements PropertyChangeListener {
         
         coordinates = new Point(x,y);
         setBackground(GREEN);
-        setBorder(BorderFactory.createLineBorder(BLACK));
+        setBorder(standard);
         setVisible(true);
     }
     
@@ -67,21 +70,7 @@ public class ViewCell extends JButton implements PropertyChangeListener {
         setDisabledIcon(null);
         repaint();
     }
-    
-/*    @Override
-    public void setEnabled(boolean b) {
-        if (!b && model.isRollover()) {
-            model.setRollover(false);
-        }
-        super.setEnabled(b);
-        if (b = true) {
-            setBackground(GREEN);
-        } else {
-            setBackground(WHITE);
-        }
-        model.setEnabled(b);
-    }*/
-    
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         Cell cell = (Cell)evt.getSource();
@@ -94,8 +83,10 @@ public class ViewCell extends JButton implements PropertyChangeListener {
         
         if (cell.isLocked()) {
             this.setEnabled(false);
+            this.setBorder(standard);
         } else {
             this.setEnabled(true);
+            this.setBorder(active);
         }
     }
 }

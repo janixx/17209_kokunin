@@ -2,6 +2,7 @@ package ru.nsu.fit.g17209.kokunin.task2.view;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 class SetPane extends JPanel {
     public static final Dimension MIN_SIZE = new Dimension(160, 440);
@@ -9,6 +10,7 @@ class SetPane extends JPanel {
     private JButton saveButton;
     private JButton loadButton;
     private JButton settingsButton;
+    private JButton exitButton;
 
 //    public SetPane() {
 //        super();
@@ -22,7 +24,7 @@ class SetPane extends JPanel {
 //        setVisible(true);
 //    }
 
-    SetPane() {
+    SetPane(ActionListener start, ActionListener load, ActionListener save, ActionListener exit) {
         super();
         setLayout(new GridBagLayout());
         setAlignmentX(0.25f);
@@ -67,13 +69,24 @@ class SetPane extends JPanel {
         add(settingsButton, gbc);
         startButton = new JButton();
         startButton.setBackground(new Color(-1052262));
-        startButton.setText("Start");
+        startButton.setText("New game");
+        startButton.addActionListener(start);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(startButton, gbc);
+        exitButton = new JButton();
+        exitButton.setBackground(new Color(-1052262));
+        exitButton.setText("Exit");
+        exitButton.addActionListener(exit);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(exitButton, gbc);
     }
 
 }

@@ -9,7 +9,7 @@ class StartPane extends JPanel {
     private JButton loadButton;
     private JButton quitButton;
     
-    StartPane(ActionListener choose, ActionListener load, ActionListener quit) {
+    StartPane(ActionListener start, ActionListener load, ActionListener quit) {
         super();
         setLayout(new GridBagLayout());
         setAlignmentX(0.25f);
@@ -27,7 +27,7 @@ class StartPane extends JPanel {
         startButton = new JButton();
         startButton.setBackground(new Color(-1052262));
         startButton.setText("Start new game");
-        startButton.addActionListener(choose);
+        startButton.addActionListener(start);
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;

@@ -52,6 +52,7 @@ public class Cell {
     void clear() {
         empty = true;
         locked = true;
+        content = Color.WHITE;
         support.firePropertyChange(null, null, null);
     }
 

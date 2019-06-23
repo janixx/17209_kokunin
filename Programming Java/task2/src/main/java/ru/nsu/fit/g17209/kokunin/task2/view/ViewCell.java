@@ -79,6 +79,8 @@ public class ViewCell extends JButton implements PropertyChangeListener {
             setBlack();
         } else if (cell.isWhite()) {
             setWhite();
+        } else {
+            clear();
         }
         
         if (cell.isLocked()) {

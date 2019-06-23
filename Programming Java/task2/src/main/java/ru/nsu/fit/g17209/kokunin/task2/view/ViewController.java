@@ -14,16 +14,21 @@ public class ViewController {
     private ActionListener startButtonListener;
     private ActionListener loadButtonListener;
     private ActionListener quitButtonListener;
-    private ActionListener computerButtonListener;
-    private ActionListener humanButtonListener;
-//    private ActionListener ButtonListener;
+    private ActionListener saveButtonListener;
     
     public ViewController(Board board) {
         boardListener = new BoardListener(board);
         startButtonListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                view.choosePaneTop();
+                view.playOnBoard();
+                board.newGame();
+            }
+        };
+        saveButtonListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            
             }
         };
     
@@ -33,7 +38,7 @@ public class ViewController {
             
             }
         };
-        
+    
         quitButtonListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -41,39 +46,11 @@ public class ViewController {
             }
         };
         
-        computerButtonListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
         
-            }
-        };
-        
-        humanButtonListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            
-            }
-        };
-        view = new View(board, boardListener, startButtonListener, quitButtonListener, loadButtonListener);
+        view = new View(board, boardListener, startButtonListener, saveButtonListener, loadButtonListener, quitButtonListener);
     }
     
     public void init() {
         view.init();
     }
-    
-    /*public MouseListener getBoardListener() {
-        return boardListener;
-    }
-    
-    public ActionListener getChooseButtonListener() {
-        return startButtonListener;
-    }
-    
-    public ActionListener getLoadButtonListener() {
-        return loadButtonListener;
-    }
-    
-    public ActionListener getQuitButtonListener() {
-        return quitButtonListener;
-    }*/
 }

@@ -21,11 +21,6 @@ public class Board {
                 board[i][j] = new Cell();
             }
         }
-        board[SIZE / 2 - 1][SIZE / 2 - 1].setWhite();
-        board[SIZE / 2][SIZE / 2].setWhite();
-        board[SIZE / 2 - 1][SIZE / 2].setBlack();
-        board[SIZE / 2][SIZE / 2 - 1].setBlack();
-        
         controller = new BoardController();
     }
     
@@ -39,7 +34,20 @@ public class Board {
         private int availableWhite;
         private int availableBlack;
         
-        private BoardController() {
+        /*private BoardController() {
+            isPlaying = true;
+            countWhite = 2;
+            countBlack = 2;
+            player = Color.BLACK;
+            availableWhite = availableBlack = 4;
+            valid = true;
+            board[Board.SIZE / 2 - 1][Board.SIZE / 2 - 2].setLocked(false);
+            board[Board.SIZE / 2 + 1][Board.SIZE / 2].setLocked(false);
+            board[Board.SIZE / 2][Board.SIZE / 2 + 1].setLocked(false);
+            board[Board.SIZE / 2 - 2][Board.SIZE / 2 - 1].setLocked(false);
+        }*/
+        
+        private void reset() {
             isPlaying = true;
             countWhite = 2;
             countBlack = 2;
@@ -303,18 +311,19 @@ public class Board {
         }
     }
     
-    void clear() {
+    public void newGame() {
         for (Cell[] row : board) {
             for (Cell cell : row) {
                 cell.clear();
             }
         }
+        
         board[SIZE / 2 - 1][SIZE / 2 - 1].setWhite();
         board[SIZE / 2][SIZE / 2].setWhite();
         board[SIZE / 2 - 1][SIZE / 2].setBlack();
         board[SIZE / 2][SIZE / 2 - 1].setBlack();
         
-        controller = new BoardController();
+        controller.reset();
     }
     
     /***

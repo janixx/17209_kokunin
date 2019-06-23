@@ -3,6 +3,7 @@ package ru.nsu.fit.g17209.kokunin.task2.view;
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalBorders;
 import java.awt.*;
 
 public class Window extends JFrame {

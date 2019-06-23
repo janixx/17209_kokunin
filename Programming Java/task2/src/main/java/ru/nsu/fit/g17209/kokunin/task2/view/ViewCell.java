@@ -10,7 +10,7 @@ import java.beans.PropertyChangeListener;
 
 public class ViewCell extends JButton implements PropertyChangeListener {
     public final static Color
-            BLACK = new Color(68, 51, 40),
+            BLACK = new Color(49, 40, 24),
             WHITE = new Color(243,245, 197),
             GREEN = new Color(21, 141, 60),
             YELLOW = new Color(0xE7FBEE37, true);
@@ -18,8 +18,8 @@ public class ViewCell extends JButton implements PropertyChangeListener {
             white = new ImageIcon("images/white.png"),
             black = new ImageIcon("images/black.png");
     private final static Border
-            standard = BorderFactory.createLineBorder(Color.BLACK),
-            active = BorderFactory.createLineBorder(Color.YELLOW, 2);
+            standard = BorderFactory.createLineBorder(BLACK),
+            active = BorderFactory.createLineBorder(YELLOW, 2);
 
 
     private boolean empty;

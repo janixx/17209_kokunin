@@ -1,8 +1,12 @@
 package ru.nsu.fit.g17209.kokunin.task2.model;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class Cell {
+    private static final Logger LOG = LogManager.getLogger();
     private boolean empty;
     private boolean locked;
     private Color content;
@@ -15,6 +19,7 @@ public class Cell {
     }
 
     public void addListener(PropertyChangeListener listener) {
+        LOG.debug("Add cell listener {}", listener.getClass().getName());
         support.addPropertyChangeListener(listener);
         support.firePropertyChange(null,null,null);
     }

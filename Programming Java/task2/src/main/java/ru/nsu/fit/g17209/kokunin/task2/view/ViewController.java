@@ -1,5 +1,7 @@
 package ru.nsu.fit.g17209.kokunin.task2.view;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.nsu.fit.g17209.kokunin.task2.model.Board;
 
 import java.awt.event.ActionEvent;
@@ -7,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
 public class ViewController {
+    private static final Logger LOG = LogManager.getLogger();
+    
     private Board board;
     private View view;
     
@@ -16,11 +20,14 @@ public class ViewController {
     private ActionListener quitButtonListener;
     private ActionListener saveButtonListener;
     
-    public ViewController(Board board) {
-        boardListener = new BoardListener(board);
+    public ViewController() {
+        board = new Board();
+        boardListener = new ViewBoardListener(board);
+        
         startButtonListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                LOG.info("Start button pressed");
                 view.playOnBoard();
                 board.newGame();
             }
@@ -42,6 +49,7 @@ public class ViewController {
         quitButtonListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                LOG.info("Exit button pressed");
                 System.exit(0);
             }
         };

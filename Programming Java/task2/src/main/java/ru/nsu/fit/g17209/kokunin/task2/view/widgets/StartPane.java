@@ -1,15 +1,15 @@
-package ru.nsu.fit.g17209.kokunin.task2.view;
+package ru.nsu.fit.g17209.kokunin.task2.view.widgets;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-class StartPane extends JPanel {
+public class StartPane extends JPanel {
     private JButton startButton;
     private JButton loadButton;
     private JButton quitButton;
     
-    StartPane(ActionListener start, ActionListener load, ActionListener quit) {
+    public StartPane(ActionListener start, ActionListener load, ActionListener quit) {
         super();
         setLayout(new GridBagLayout());
         setAlignmentX(0.25f);

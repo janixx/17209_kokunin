@@ -1,15 +1,15 @@
-package ru.nsu.fit.g17209.kokunin.task2.view;
+package ru.nsu.fit.g17209.kokunin.task2.view.widgets;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-class ChoosePane extends JPanel {
+public class ChoosePane extends JPanel {
     JLabel label;
     JButton computerButton;
     JButton humanButton;
     
-    ChoosePane(/*ActionListener computer, ActionListener human*/) {
+    public ChoosePane(/*ActionListener computer, ActionListener human*/) {
         super();
         setLayout(new GridBagLayout());
         setAlignmentX(0.25f);

@@ -1,14 +1,23 @@
 package ru.nsu.fit.g17209.kokunin.task2.model;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 public class Board {
+    private static final Logger LOG;
     public enum Direction {UP, UPRIGHT, RIGHT, DOWNRIGHT, DOWN, DOWNLEFT, LEFT, UPLEFT}
     
-    public static final int SIZE = 8;
+    public static final int SIZE;
+    
+    static {
+        SIZE = 8;
+        LOG = LogManager.getLogger();
+    }
     
     private PropertyChangeSupport support = new PropertyChangeSupport(this);
     private BoardController controller;
@@ -45,29 +54,40 @@ public class Board {
             board[Board.SIZE / 2 + 1][Board.SIZE / 2].setLocked(false);
             board[Board.SIZE / 2][Board.SIZE / 2 + 1].setLocked(false);
             board[Board.SIZE / 2 - 2][Board.SIZE / 2 - 1].setLocked(false);
+            LOG.debug("Reset function successfully done");
         }
     
-        private void setCell(int x, int y, Color fill) throws IllegalArgumentException {
-            checkPoint(x, y);
+        private void setCell(int x, int y, Color fill)/* throws IllegalArgumentException*/ {
+            //checkPoint(x, y);
             if (board[x][y].isThisColor(fill)) {
                 return;
             }
-        
-            if (board[x][y].isAnotherColor(fill)) {
-                if (board[x][y].isWhite()) {
-                    countWhite--;
+            
+            if (isCellEmpty(x,y)) {
+                if (fill == Color.WHITE) {
+                    countWhite++;
                 } else {
-                    countBlack--;
+                    countBlack++;
+                }
+            } else {
+                if (board[x][y].isAnotherColor(fill)) {
+                    if (board[x][y].isWhite()) {
+                        countWhite--;
+                    } else {
+                        countBlack--;
+                    }
+                }
+    
+                if (board[x][y].isWhite()) {
+                    countBlack++;
+                } else {
+                    countWhite++;
                 }
             }
-        
-            if (board[x][y].isWhite()) {
-                countBlack++;
-            } else {
-                countWhite++;
-            }
-        
+            LOG.debug("Score changed; Black score is {}, White score is {}", countBlack, countWhite);
+            
             board[x][y].setColor(fill);
+            LOG.debug("Cell with coordinate {} {} set color {}", x, y, fill);
         }
     
         /**
@@ -105,6 +125,8 @@ public class Board {
             if (( p.x > 0 && p.y > 0 ) && isAnotherColor(p.x - 1, p.y - 1, color)) {
                 directions.add(Direction.UPLEFT);
             }
+            
+            LOG.debug("Watch all neighbours of cell with coordinate {} {}", p.x, p.y);
             return directions;
         }
     
@@ -160,10 +182,12 @@ public class Board {
                 }
             }
             p.setLocation(startX, startY);
+            LOG.debug("Check direction {} of cell with coordinates {} {}", d, p.x, p.y);
             return directionIsRelevant;
         }
     
         private boolean checkAllDirections(Point p, ArrayList<Direction> directions, Color color) {
+            LOG.debug("Check directions {} of cell with coordinates {} {}", directions, p.x, p.y);
             for (int i = 0; i < directions.size(); i++) {
                 if (checkDirection(p, directions.get(i), color)) {
                     return true;
@@ -173,6 +197,7 @@ public class Board {
         }
     
         private void calculateAvlblMvs(Color color) {
+            LOG.debug("Calculate available moves for {} player", color);
             int counter = 0;
             Cell cell;
             Point p = new Point(0, 0);
@@ -192,8 +217,10 @@ public class Board {
                         if (checkAllDirections(p, available, color)) {
                             cell.setLocked(false);
                             ++counter;
+                            LOG.debug("Cell with coordinates {} {} is available for {}", p.x, p.y, color);
                         } else {
                             cell.setLocked(true);
+                            LOG.debug("Cell with coordinates {} {} is NOT available for {}", p.x, p.y, color);
                         }
                     }
                 }
@@ -208,12 +235,13 @@ public class Board {
         
         private void treatMove(Point p) {
             int startX = p.x, startY = p.y;
-    
+            LOG.debug("Treat move of {} player to cell with coordinates {} {}", player, p.x, p.y);
             /* array that contains number of neighbours cells with other color */
             ArrayList<Direction> directions = calculateNeighbours(p, player);
             ArrayList<Direction> available = new ArrayList<>(0);
             if (directions.isEmpty()) {
-                System.out.println("TREAT TURN: ARRAY LIST IS EMPTY!!!");
+//                System.out.println("TREAT TURN: ARRAY LIST IS EMPTY!!!");
+                LOG.error("Player {} can't move to cell with coordinate {} {}", player, p.x, p.y);
             }
             for (int i = 0; i < directions.size(); i++) {
                 if (checkDirection(p, directions.get(i), player)) {
@@ -234,18 +262,21 @@ public class Board {
             
             boolean opponentHasMovies = ( opponent == Color.WHITE && availableWhite > 0 ) ||
                     ( opponent == Color.BLACK && availableBlack > 0 );
+            
             if (!opponentHasMovies) {
                 calculateAvlblMvs(player);
+                
+                LOG.info("Opponent ({}) hasn't moves",(player==Color.BLACK ? Color.WHITE : Color.BLACK));
                 boolean playerHasMoves = ( player == Color.WHITE && availableWhite > 0 ) ||
                         ( player == Color.BLACK && availableBlack > 0 );
-                System.out.println("OPYAT' YA HODIT' BUDU????");
+                
     
                 if (!playerHasMoves) {
                     isPlaying = false;
-                    System.out.println("GAME VSYO, FINISH!!!");
+                    LOG.info("Both players hasn't moves. The end of game.");
                 }
             } else {
-                System.out.println("OTDAJU HOD :(");
+                LOG.debug("Move is passed to the opponent");
                 player = opponent;
             }
             support.firePropertyChange("blocked", null, null);
@@ -258,12 +289,14 @@ public class Board {
     
     private void checkPoint(int x, int y) throws IllegalArgumentException {
         if (!isCellOnBoard(x,y)) {
+            LOG.error("Attempt to access a cell outside the board {} {}", x, y);
             String message = "Uncorrected coordinate: " + x + " " + y;
             throw new IllegalArgumentException(message);
         }
     }
     
     public void addBoardListener(PropertyChangeListener listener) {
+        LOG.debug("Board listener added: {}", listener.getClass().getName());
         support.addPropertyChangeListener(listener);
         support.firePropertyChange(null, null, null);
     }
@@ -276,20 +309,8 @@ public class Board {
         }
     }
     
-    public void move(Point p) throws IllegalArgumentException {
-        if (board[p.x][p.y].isLocked()) {
-            String message = "Point " + p.x + p.y + " is not available for " + controller.player + " player!";
-            System.out.println(message);
-            throw new IllegalArgumentException(message);
-        }
-        controller.treatMove(p);
-        
-        if (!controller.isPlaying) {
-            support.firePropertyChange("finish", false, true);
-        }
-    }
-    
     public void newGame() {
+        LOG.info("Started new game");
         for (Cell[] row : board) {
             for (Cell cell : row) {
                 cell.clear();
@@ -304,6 +325,21 @@ public class Board {
         controller.reset();
     }
     
+    public void move(Point p) throws IllegalArgumentException {
+        if (board[p.x][p.y].isLocked()) {
+            LOG.error("Cell with coordinates ({},{}) isn't available for {} player", p.x, p.y, controller.player);
+            String message = "Cell with coordinates " + p.x + p.y + " is not available for " + controller.player + " player!";
+//            System.out.println(message);
+            throw new IllegalArgumentException(message);
+        }
+        LOG.info("{} player move to cell with coordinates ({},{})", controller.player, p.x, p.y);
+        controller.treatMove(p);
+        
+        if (!controller.isPlaying) {
+            support.firePropertyChange("finish", false, true);
+        }
+    }
+    
     /***
      * This function returns values:
      * -1 - game isn't finished
@@ -315,9 +351,13 @@ public class Board {
         if (controller.isPlaying) {
             return -1;
         }
-        
+        LOG.info("Calculating the winner of the game");
         return ( controller.countWhite <= controller.countBlack ?
                 ( controller.countWhite == controller.countBlack ? 0 : 2 ) : 1 );
+    }
+    
+    public int getScore(Color player) {
+        return (player == Color.WHITE ? controller.countWhite : controller.countBlack);
     }
     
     public boolean isThisColor(int x, int y, Color color) throws IllegalArgumentException {

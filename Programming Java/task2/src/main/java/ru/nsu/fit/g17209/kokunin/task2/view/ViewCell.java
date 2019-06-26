@@ -70,6 +70,11 @@ public class ViewCell extends JButton implements PropertyChangeListener {
         setDisabledIcon(null);
         repaint();
     }
+    
+    public void setRedRound() {
+        paintImmediately(getX()/2, getY()/2, 3, 3);
+        repaint();
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

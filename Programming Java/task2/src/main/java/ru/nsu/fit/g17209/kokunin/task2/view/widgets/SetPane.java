@@ -1,10 +1,10 @@
-package ru.nsu.fit.g17209.kokunin.task2.view;
+package ru.nsu.fit.g17209.kokunin.task2.view.widgets;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-class SetPane extends JPanel {
+public class SetPane extends JPanel {
     public static final Dimension MIN_SIZE = new Dimension(160, 440);
     private JButton startButton;
     private JButton saveButton;
@@ -24,7 +24,7 @@ class SetPane extends JPanel {
 //        setVisible(true);
 //    }
 
-    SetPane(ActionListener start, ActionListener load, ActionListener save, ActionListener exit) {
+    public SetPane(ActionListener start, ActionListener load, ActionListener save, ActionListener exit) {
         super();
         setLayout(new GridBagLayout());
         setAlignmentX(0.25f);

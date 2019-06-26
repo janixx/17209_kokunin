@@ -10,7 +10,7 @@ public class Window extends JFrame {
     static final Dimension MIN_SIZE = new Dimension(640,480);
     
     public Window() {
-        super();
+        super("Reversi Game");
         setLayout(new BorderLayout());
         setSize(MIN_SIZE);
         setMinimumSize(MIN_SIZE);

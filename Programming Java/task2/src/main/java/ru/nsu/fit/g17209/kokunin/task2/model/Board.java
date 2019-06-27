@@ -326,6 +326,7 @@ public class Board {
     }
     
     public void move(Point p) throws IllegalArgumentException {
+        checkPoint(p.x, p.y);
         if (board[p.x][p.y].isLocked()) {
             LOG.error("Cell with coordinates ({},{}) isn't available for {} player", p.x, p.y, controller.player);
             String message = "Cell with coordinates " + p.x + p.y + " is not available for " + controller.player + " player!";
